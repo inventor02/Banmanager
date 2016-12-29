@@ -2,7 +2,7 @@ package me.shawlaf.banmanager.managers.config;
 
 import com.google.common.io.ByteStreams;
 import me.shawlaf.banmanager.Banmanager;
-import me.shawlaf.banmanager.managers.config.uuids.UUIDMapDatabase;
+import me.shawlaf.banmanager.managers.config.uuids.LocalUUIDMapDatabase;
 import net.md_5.bungee.config.Configuration;
 import net.md_5.bungee.config.ConfigurationProvider;
 import net.md_5.bungee.config.YamlConfiguration;
@@ -20,7 +20,7 @@ public class ConfigurationManager {
     private Banmanager banmanager;
     private Configuration configuration;
     
-    private UUIDMapDatabase uuidMapDatabase;
+    private LocalUUIDMapDatabase uuidMapDatabase;
     
     private BanManagerConfiguration banManagerConfiguration;
     
@@ -70,7 +70,7 @@ public class ConfigurationManager {
             if (oldIPMapFile.exists())
                 migrateIPS(oldIPMapFile, ipsFile);
             
-            uuidMapDatabase = new UUIDMapDatabase(uuidMapFile, AbstractConfiguration.Format.CUSTOM);
+            uuidMapDatabase = new LocalUUIDMapDatabase(uuidMapFile, AbstractConfiguration.Format.CUSTOM);
             
             
         } catch (Exception e) {

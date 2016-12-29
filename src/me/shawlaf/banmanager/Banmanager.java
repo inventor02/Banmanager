@@ -1,11 +1,16 @@
 package me.shawlaf.banmanager;
 
 import dev.wolveringer.bungeeutil.AsyncCatcher;
+import me.shawlaf.banmanager.implementation.users.CraftBanmanagerUser;
 import me.shawlaf.banmanager.managers.ErrorManager;
 import me.shawlaf.banmanager.managers.config.ConfigurationManager;
+import me.shawlaf.banmanager.users.BanManagerUser;
 import me.shawlaf.banmanager.util.chat.C;
+import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.md_5.bungee.api.plugin.Plugin;
 
+import java.util.HashSet;
+import java.util.Set;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Handler;
 
@@ -13,6 +18,16 @@ import java.util.logging.Handler;
  * Created by Florian on 29.12.2016.
  */
 public class Banmanager extends Plugin {
+    
+    private static final Set<BanManagerUser> online = new HashSet<>();
+    
+    public static BanManagerUser get(ProxiedPlayer player) {
+        for (BanManagerUser user : online)
+            if (user.getUniqueId() == player.getUniqueId())
+                return user;
+        
+        return new CraftBanmanagerUser(player);
+    }
     
     private boolean successfulStartup = false;
     
