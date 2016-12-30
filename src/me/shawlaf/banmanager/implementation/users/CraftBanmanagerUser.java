@@ -1,7 +1,7 @@
 package me.shawlaf.banmanager.implementation.users;
 
 import me.shawlaf.banmanager.punish.Punishment;
-import me.shawlaf.banmanager.users.BanManagerUser;
+import me.shawlaf.banmanager.users.BanmanagerUser;
 import net.md_5.bungee.api.Callback;
 import net.md_5.bungee.api.ChatMessageType;
 import net.md_5.bungee.api.Title;
@@ -17,7 +17,7 @@ import java.util.*;
 /**
  * Created by Florian on 29.12.2016.
  */
-public class CraftBanmanagerUser implements BanManagerUser {
+public class CraftBanmanagerUser implements BanmanagerUser {
     
     private ProxiedPlayer implementation;
     

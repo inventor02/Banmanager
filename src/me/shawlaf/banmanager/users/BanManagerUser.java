@@ -11,7 +11,7 @@ import java.util.UUID;
  * Created by Florian on 29.12.2016.
  */
 @Deprecated // TODO Finish implementation
-public interface BanManagerUser extends ProxiedPlayer, DatabaseEntry {
+public interface BanmanagerUser extends ProxiedPlayer, DatabaseEntry {
     
     Set<UUID> findAlternateAccountIds();
     

@@ -18,8 +18,8 @@ public class LocalUUIDMapDatabase extends AbstractConfiguration implements UUIDM
     private Map<String, UUID> nameToUUIDMap = new HashMap<>();
     private Map<UUID, String> uuidToNameMap = new HashMap<>();
     
-    public LocalUUIDMapDatabase(File file, Format format) {
-        super(file, format);
+    public LocalUUIDMapDatabase(File file) {
+        super(file, Format.CUSTOM);
     }
     
     @Override

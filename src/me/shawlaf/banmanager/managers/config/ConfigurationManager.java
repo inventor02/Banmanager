@@ -20,8 +20,6 @@ public class ConfigurationManager {
     private Banmanager banmanager;
     private Configuration configuration;
     
-    private LocalUUIDMapDatabase uuidMapDatabase;
-    
     private BanManagerConfiguration banManagerConfiguration;
     
     public ConfigurationManager(Banmanager banmanager) {
@@ -69,9 +67,6 @@ public class ConfigurationManager {
             
             if (oldIPMapFile.exists())
                 migrateIPS(oldIPMapFile, ipsFile);
-            
-            uuidMapDatabase = new LocalUUIDMapDatabase(uuidMapFile, AbstractConfiguration.Format.CUSTOM);
-            
             
         } catch (Exception e) {
             return false;
@@ -135,5 +130,29 @@ public class ConfigurationManager {
     
     public BanManagerConfiguration getConfiguration() {
         return banManagerConfiguration;
+    }
+    
+    public File getConfigurationFile() {
+        return configurationFile;
+    }
+    
+    public File getErrorsDirectory() {
+        return errorsDirectory;
+    }
+    
+    public File getIpsFile() {
+        return ipsFile;
+    }
+    
+    public File getPunishmentsFile() {
+        return punishmentsFile;
+    }
+    
+    public File getUsersFile() {
+        return usersFile;
+    }
+    
+    public File getUUUIDMapFile() {
+        return uuidMapFile;
     }
 }

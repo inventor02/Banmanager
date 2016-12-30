@@ -3,8 +3,10 @@ package me.shawlaf.banmanager;
 import dev.wolveringer.bungeeutil.AsyncCatcher;
 import me.shawlaf.banmanager.implementation.users.CraftBanmanagerUser;
 import me.shawlaf.banmanager.managers.ErrorManager;
+import me.shawlaf.banmanager.managers.config.BanManagerConfiguration;
 import me.shawlaf.banmanager.managers.config.ConfigurationManager;
-import me.shawlaf.banmanager.users.BanManagerUser;
+import me.shawlaf.banmanager.managers.database.DatabaseManager;
+import me.shawlaf.banmanager.users.BanmanagerUser;
 import me.shawlaf.banmanager.util.chat.C;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.md_5.bungee.api.plugin.Plugin;
@@ -19,10 +21,10 @@ import java.util.logging.Handler;
  */
 public class Banmanager extends Plugin {
     
-    private static final Set<BanManagerUser> online = new HashSet<>();
+    private static final Set<BanmanagerUser> online = new HashSet<>();
     
-    public static BanManagerUser get(ProxiedPlayer player) {
-        for (BanManagerUser user : online)
+    public static BanmanagerUser get(ProxiedPlayer player) {
+        for (BanmanagerUser user : online)
             if (user.getUniqueId() == player.getUniqueId())
                 return user;
         
@@ -33,6 +35,7 @@ public class Banmanager extends Plugin {
     
     private ConfigurationManager configurationManager;
     private ErrorManager errorManager;
+    private DatabaseManager databaseManager;
     
     @Override
     public void onLoad() {
@@ -50,6 +53,7 @@ public class Banmanager extends Plugin {
         
         this.configurationManager = new ConfigurationManager(this);
         this.errorManager = new ErrorManager(this);
+        this.databaseManager = new DatabaseManager(this);
         
         successfulStartup = true;
     }
@@ -72,5 +76,13 @@ public class Banmanager extends Plugin {
         getProxy().getScheduler().cancel(Banmanager.this);
         getExecutorService().shutdownNow();
         getProxy().getLogger().info("Disabled plugin " + getDescription().getName() + " version " + getDescription().getVersion() + " by " + getDescription().getAuthor());
+    }
+    
+    public BanManagerConfiguration getConfiguration() {
+        return configurationManager.getConfiguration();
+    }
+    
+    public ConfigurationManager getConfigurationManager() {
+        return configurationManager;
     }
 }
