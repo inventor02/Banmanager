@@ -52,6 +52,14 @@ public class SqlConnectionManager {
         return pass;
     }
     
+    public Connection getConnection() {
+        
+        if (connection == null)
+            return connect();
+        
+        return connection;
+    }
+    
     public Connection connect() {
         try {
             if (connection != null)
