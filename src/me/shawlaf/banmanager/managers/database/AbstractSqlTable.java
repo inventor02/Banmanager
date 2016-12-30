@@ -1,6 +1,8 @@
 package me.shawlaf.banmanager.managers.database;
 
 import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
 
 /**
  * Created by Florian on 30.12.2016.
@@ -16,7 +18,12 @@ public abstract class AbstractSqlTable {
         
         this.table = table;
         
-        
+        try {
+            PreparedStatement statement = connection().prepareStatement("CREATE TABLE IF NOT EXISTS " + table + " (" + tableParams() + ");");
+            statement.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
     }
     
     protected abstract String tableParams();
