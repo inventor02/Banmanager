@@ -16,19 +16,25 @@ public class DatabaseInsert {
     private Map<Integer, Object> map;
     private int index;
     
-    public DatabaseInsert() {
-        this(new HashMap<>());
+    public static DatabaseInsert create() {
+        return create(new HashMap<>());
     }
     
-    public DatabaseInsert(Map<Integer, Object> map) {
+    public static DatabaseInsert create(Map<Integer, Object> map) {
+        return new DatabaseInsert(map);
+    }
+    
+    private DatabaseInsert(Map<Integer, Object> map) {
         this.map = map;
         
         this.index = map.size() + 1;
     }
     
-    public void put(Object... objects) {
+    public DatabaseInsert put(Object... objects) {
         for (Object object : objects)
             map.put(index++, object);
+        
+        return this;
     }
     
     public Map<Integer, Object> getMap() {
@@ -45,12 +51,12 @@ public class DatabaseInsert {
     
     public void execute(AbstractSqlTable table) throws SQLException {
         String sql = "INSERT INTO " + table.table + " VALUES (" + generateQuestionMarks(size()) + ");";
-    
+        
         PreparedStatement preparedStatement = table.connection().prepareStatement(sql);
-    
+        
         for (Map.Entry<Integer, Object> entry : entrySet())
             preparedStatement.setObject(entry.getKey(), entry.getValue());
-    
+        
         preparedStatement.executeUpdate();
     }
     

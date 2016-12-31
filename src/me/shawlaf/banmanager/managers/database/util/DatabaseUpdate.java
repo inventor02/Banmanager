@@ -13,26 +13,32 @@ import java.util.List;
  */
 public class DatabaseUpdate {
     
-    private List<String> parametersToUpdate, valuesToUpdate;
-    private List<String> parametersToCheck, valuesToCheck;
+    private List<String> parametersToUpdate, parametersToCheck;
+    private List<Object> valuesToUpdate, valuesToCheck;
     
-    public DatabaseUpdate() {
-        this.parametersToCheck = new ArrayList<>();
-        this.parametersToUpdate = new ArrayList<>();
+    public static DatabaseUpdate create() {
+        return new DatabaseUpdate();
     }
     
-    public DatabaseUpdate updateValues(String... values) {
+    private DatabaseUpdate() {
+        this.parametersToCheck = new ArrayList<>();
+        this.parametersToUpdate = new ArrayList<>();
+        this.valuesToUpdate = new ArrayList<>();
+        this.valuesToCheck = new ArrayList<>();
+    }
+    
+    public DatabaseUpdate updateValues(Object... values) {
         valuesToUpdate.addAll(Arrays.asList(values));
         return this;
     }
     
-    public DatabaseUpdate checkValues(String... values) {
+    public DatabaseUpdate checkValues(Object... values) {
         valuesToCheck.addAll(Arrays.asList(values));
         return this;
     }
     
     public DatabaseUpdate checkColumns(String... parameters) {
-        parametersToUpdate.addAll(Arrays.asList(parameters));
+        parametersToCheck.addAll(Arrays.asList(parameters));
         return this;
     }
     
@@ -51,8 +57,14 @@ public class DatabaseUpdate {
         for (int i = 0; i < parametersToUpdate.size(); ++ i)
             sqlBuilder.append(parametersToUpdate.get(i) + " = ?" + (i == parametersToUpdate.size() - 1 ? " " : ", "));
         
-        for (int i = 0; i < parametersToCheck.size(); ++ i)
-            sqlBuilder.append(parametersToCheck.get(i) + " = ?" + (i == parametersToCheck.size() - 1 ? ";" : " AND "));
+        if (parametersToCheck.size() > 0) {
+            sqlBuilder.append("WHERE ");
+            
+            for (int i = 0; i < parametersToCheck.size(); ++ i)
+                sqlBuilder.append(parametersToCheck.get(i) + " = ?" + (i == parametersToCheck.size() - 1 ? "" : " AND "));
+        }
+        
+        sqlBuilder.append(";");
         
         return sqlBuilder.toString();
     }

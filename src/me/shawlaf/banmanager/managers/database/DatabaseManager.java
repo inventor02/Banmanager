@@ -4,6 +4,7 @@ import me.shawlaf.banmanager.Banmanager;
 import me.shawlaf.banmanager.managers.config.users.LocalUserDatabase;
 import me.shawlaf.banmanager.managers.config.uuids.LocalUUIDMapDatabase;
 import me.shawlaf.banmanager.managers.database.sql.SqlConnectionManager;
+import me.shawlaf.banmanager.managers.database.uuids.MysqlUUIDMapDatabase;
 
 /**
  * Created by Florian on 30.12.2016.
@@ -21,11 +22,16 @@ public class DatabaseManager {
         this.banmanager = banmanager;
         
         if (banmanager.getConfiguration().isUsingMysql()) {
+            uuidMapDatabase = new MysqlUUIDMapDatabase(this, "uuids");
             // TODO write implementation for Mysql Database
         } else {
             userDatabase = new LocalUserDatabase(banmanager.getConfigurationManager().getUsersFile());
             uuidMapDatabase = new LocalUUIDMapDatabase(banmanager.getConfigurationManager().getUUUIDMapFile());
         }
+    }
+    
+    public Banmanager getPlugin() {
+        return banmanager;
     }
     
     public SqlConnectionManager getConnectionManager() {

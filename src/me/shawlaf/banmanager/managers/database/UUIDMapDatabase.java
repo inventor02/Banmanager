@@ -1,5 +1,6 @@
 package me.shawlaf.banmanager.managers.database;
 
+import java.sql.SQLException;
 import java.util.UUID;
 
 /**
@@ -7,7 +8,7 @@ import java.util.UUID;
  */
 public interface UUIDMapDatabase {
     
-    void updateNameUUIDSet(String name, UUID uuid);
+    void updateNameUUIDSet(String name, UUID uuid) throws SQLException;
     
     UUID getCachedUUID(String name);
     
