@@ -51,12 +51,12 @@ public class LocalUUIDMapDatabase extends AbstractConfiguration implements UUIDM
     }
     
     @Override
-    public UUID getCachedUUID(String name) {
+    public UUID getUUID(String name) {
         return nameToUUIDMap.get(name);
     }
     
     @Override
-    public String getCachedName(UUID uuid) {
+    public String getName(UUID uuid) {
         return uuidToNameMap.get(uuid);
     }
 }

@@ -10,6 +10,7 @@ import net.md_5.bungee.api.config.ServerInfo;
 import net.md_5.bungee.api.connection.PendingConnection;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.md_5.bungee.api.connection.Server;
+import org.json.JSONObject;
 
 import java.net.InetSocketAddress;
 import java.util.*;
@@ -24,6 +25,7 @@ public class CraftBanmanagerUser implements BanmanagerUser {
     private Set<UUID> punishmentIds = new HashSet<>();
     private boolean adminStatus;
     private Set<String> knownIPs, mail;
+    
     
     
     public CraftBanmanagerUser(ProxiedPlayer player) {

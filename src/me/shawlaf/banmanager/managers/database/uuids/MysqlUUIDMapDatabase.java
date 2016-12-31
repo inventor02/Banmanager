@@ -53,7 +53,7 @@ public class MysqlUUIDMapDatabase extends AbstractSqlTable implements UUIDMapDat
     }
     
     @Override
-    public UUID getCachedUUID(String name) {
+    public UUID getUUID(String name) {
         if (nameToUUIDCache.containsKey(name.toLowerCase()))
             return nameToUUIDCache.get(name.toLowerCase());
         else {
@@ -75,7 +75,7 @@ public class MysqlUUIDMapDatabase extends AbstractSqlTable implements UUIDMapDat
     }
     
     @Override
-    public String getCachedName(UUID uuid) {
+    public String getName(UUID uuid) {
         if (uuidToNameCache.containsKey(uuid))
             return uuidToNameCache.get(uuid);
         else {

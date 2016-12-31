@@ -10,7 +10,7 @@ public interface UUIDMapDatabase {
     
     void updateNameUUIDSet(String name, UUID uuid) throws SQLException;
     
-    UUID getCachedUUID(String name);
+    UUID getUUID(String name);
     
-    String getCachedName(UUID uuid);
+    String getName(UUID uuid);
 }

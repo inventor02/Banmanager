@@ -1,6 +1,7 @@
 package me.shawlaf.banmanager;
 
 import dev.wolveringer.bungeeutil.AsyncCatcher;
+import me.shawlaf.banmanager.async.Multithreading;
 import me.shawlaf.banmanager.implementation.users.CraftBanmanagerUser;
 import me.shawlaf.banmanager.managers.ErrorManager;
 import me.shawlaf.banmanager.managers.config.BanManagerConfiguration;
@@ -40,6 +41,9 @@ public class Banmanager extends Plugin {
     
     @Override
     public void onLoad() {
+    
+        Multithreading.initialize(this);
+        
         if (! ensureBungeeUtil()) {
             getLogger().severe(C.RED + "-------------------------------------------------------------------------------------------------------------------------");
             getLogger().severe(C.RED + "	[Shawlaf's Banmanager] BUNGEEUTIL DEPENDENCY NOT FOUND!");
