@@ -38,4 +38,12 @@ public class DatabaseManager {
     public SqlConnectionManager getConnectionManager() {
         return connectionManager;
     }
+    
+    public UserDatabase getUserDatabase() {
+        return userDatabase;
+    }
+    
+    public UUIDMapDatabase getUuidMapDatabase() {
+        return uuidMapDatabase;
+    }
 }

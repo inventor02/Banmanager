@@ -1,5 +1,6 @@
 package me.shawlaf.banmanager.implementation.users;
 
+import me.shawlaf.banmanager.Banmanager;
 import me.shawlaf.banmanager.punish.Punishment;
 import me.shawlaf.banmanager.users.BanmanagerUser;
 import net.md_5.bungee.api.Callback;
@@ -21,6 +22,7 @@ import java.util.*;
 public class CraftBanmanagerUser implements BanmanagerUser {
     
     private ProxiedPlayer implementation;
+    private Banmanager plugin;
     
     private Set<UUID> punishmentIds = new HashSet<>();
     private boolean adminStatus;
@@ -28,10 +30,11 @@ public class CraftBanmanagerUser implements BanmanagerUser {
     
     
     
-    public CraftBanmanagerUser(ProxiedPlayer player) {
+    public CraftBanmanagerUser(ProxiedPlayer player, Banmanager plugin) {
         this.implementation = player;
+        this.plugin = plugin;
         
-        // TODO
+        
     }
     
     @Override

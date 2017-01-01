@@ -16,6 +16,7 @@ import net.md_5.bungee.api.plugin.Plugin;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
+import java.util.function.Supplier;
 import java.util.logging.Handler;
 
 /**
@@ -24,13 +25,14 @@ import java.util.logging.Handler;
 public class Banmanager extends Plugin {
     
     private static final Set<BanmanagerUser> online = new HashSet<>();
+    private static Supplier<Banmanager> getPlugin = () -> null;
     
     public static BanmanagerUser get(ProxiedPlayer player) {
         for (BanmanagerUser user : online)
             if (user.getUniqueId() == player.getUniqueId())
                 return user;
         
-        return new CraftBanmanagerUser(player);
+        return new CraftBanmanagerUser(player, getPlugin.get());
     }
     
     private boolean successfulStartup = false;
@@ -41,6 +43,8 @@ public class Banmanager extends Plugin {
     
     @Override
     public void onLoad() {
+        
+        getPlugin = () -> this;
     
         Multithreading.initialize(this);
         
@@ -89,5 +93,13 @@ public class Banmanager extends Plugin {
     
     public ConfigurationManager getConfigurationManager() {
         return configurationManager;
+    }
+    
+    public DatabaseManager getDatabaseManager() {
+        return databaseManager;
+    }
+    
+    public boolean hasPermission(BanmanagerUser banmanagerUser, String punishmentInfoViewIp) {
+        return true; // TODO
     }
 }
