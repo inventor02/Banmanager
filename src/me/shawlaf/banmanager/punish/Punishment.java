@@ -28,6 +28,8 @@ public interface Punishment extends DatabaseEntry {
     
     String getRemoveReason();
     
+    UUID getPunishmentId();
+    
     UUID getOffenderUUID();
     
     UUID getModerator();
@@ -38,7 +40,7 @@ public interface Punishment extends DatabaseEntry {
     
     PunishmentType getType();
     
-    long removeWhenDate();
+    long getRemoveWhenDate();
     
     long getDateCreated();
     
@@ -50,8 +52,6 @@ public interface Punishment extends DatabaseEntry {
     
     void remove(UUID removedBy, String reason, long when);
     
-    boolean wasRemoved();
-    
     Banmanager getPlugin();
     
     UUID getRemoveWhenModerator();
@@ -59,6 +59,18 @@ public interface Punishment extends DatabaseEntry {
     String getRemoveWhenReason();
     
     void reactivate();
+    
+    default boolean hasExpired() {
+        return getDateExpire() == - 1L ? false : System.currentTimeMillis() > getDateExpire();
+    }
+    
+    default boolean isActive() {
+        return isPermanent() ? ! wasRemoved() : hasExpired() ? false : ! wasRemoved();
+    }
+    
+    default boolean wasRemoved() {
+        return getRemoveReason() != null;
+    }
     
     default boolean willBeRemoved() {
         return getRemoveWhenReason() != null;
@@ -105,7 +117,7 @@ public interface Punishment extends DatabaseEntry {
             lore.add(C.RED + "=== PUNISHMENT WILL BE REMOVED ===");
             lore.add(C.RESET + "By: " + C.DARK_GRAY + getPlugin().getDatabaseManager().getUuidMapDatabase().getName(getRemoveWhenModerator()));
             lore.add(C.RESET + "Reason: " + C.DARK_GRAY + getRemoveWhenReason());
-            lore.add(C.RESET + "When: " + C.DARK_GRAY + TimeUtils.format(removeWhenDate()));
+            lore.add(C.RESET + "When: " + C.DARK_GRAY + TimeUtils.format(getRemoveWhenDate()));
         }
         
         if (wasRemoved()) {
@@ -140,7 +152,7 @@ public interface Punishment extends DatabaseEntry {
     }
     
     default String generateLoginMessage() {
-        return C.RED + "You are banned from server\nReason: " + getReason() + "\nLength: " + (isPermanent() ? "Permanent" : TimeUtils.getDurationBreakdown(willBeRemoved() ? removeWhenDate() - System.currentTimeMillis() : getLenghtLeft()));
+        return C.RED + "You are banned from server\nReason: " + getReason() + "\nLength: " + (isPermanent() ? "Permanent" : TimeUtils.getDurationBreakdown(willBeRemoved() ? getRemoveWhenDate() - System.currentTimeMillis() : getLenghtLeft()));
     }
     
     // TODO CHAT MESSAGE ON MUTE

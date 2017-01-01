@@ -28,6 +28,10 @@ public class Banmanager extends Plugin {
     private static Supplier<Banmanager> getPlugin = () -> null;
     
     public static BanmanagerUser get(ProxiedPlayer player) {
+        
+        if (player == null)
+            return null;
+        
         for (BanmanagerUser user : online)
             if (user.getUniqueId() == player.getUniqueId())
                 return user;
