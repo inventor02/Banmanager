@@ -1,6 +1,7 @@
 package me.shawlaf.banmanager.implementation.users;
 
 import me.shawlaf.banmanager.Banmanager;
+import me.shawlaf.banmanager.indev.NotYetImplementedException;
 import me.shawlaf.banmanager.punish.Punishment;
 import me.shawlaf.banmanager.users.BanmanagerUser;
 import net.md_5.bungee.api.Callback;
@@ -11,7 +12,6 @@ import net.md_5.bungee.api.config.ServerInfo;
 import net.md_5.bungee.api.connection.PendingConnection;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.md_5.bungee.api.connection.Server;
-import org.json.JSONObject;
 
 import java.net.InetSocketAddress;
 import java.util.*;
@@ -29,72 +29,81 @@ public class CraftBanmanagerUser implements BanmanagerUser {
     private Set<String> knownIPs, mail;
     
     
-    
     public CraftBanmanagerUser(ProxiedPlayer player, Banmanager plugin) {
-        this.implementation = player;
-        this.plugin = plugin;
+        throw new NotYetImplementedException("Constructor", CraftBanmanagerUser.class);
+
+//        this.implementation = player;
+//        this.plugin = plugin;
         
         
     }
     
     @Override
     public Map<String, Object> map() {
-        return null; // TODO
+        throw new NotYetImplementedException("map", CraftBanmanagerUser.class);
+//        return null; // TODO
     }
     
     @Override
     public Map<Integer, Object> sqlInsertMap() {
-        return null; // TODO
+        throw new NotYetImplementedException("sqlInsertMap", CraftBanmanagerUser.class);
+//        return null; // TODO
     }
     
     @Override
     public Set<UUID> findAlternateAccountIds() {
-        return null;
+        throw new NotYetImplementedException("findAlternateAccountIds", CraftBanmanagerUser.class);
+//        return null;
     }
     
     @Override
     public void addIp(String ip) {
-        
+        throw new NotYetImplementedException("addIp", CraftBanmanagerUser.class);
     }
     
     @Override
     public boolean hasSimilarIps(UUID otherUser) {
-        return false;
+        throw new NotYetImplementedException("hasSimilarIps", CraftBanmanagerUser.class);
+//        return false;
     }
     
     @Override
     public void purgePunishments() {
-        
+        throw new NotYetImplementedException("purgePunishments", CraftBanmanagerUser.class);
     }
     
     @Override
     public void setAdmin(boolean state) {
-        
+        throw new NotYetImplementedException("setAdmin", CraftBanmanagerUser.class);
     }
     
     @Override
     public boolean isAdmin() {
-        return false;
+        throw new NotYetImplementedException("isAdmin", CraftBanmanagerUser.class);
+//        return false;
     }
     
     @Override
     public void addPunishment() {
-        
+        throw new NotYetImplementedException("addPunishment", CraftBanmanagerUser.class);
     }
     
     @Override
     public Punishment getCurrentBan() {
-        return null;
+        throw new NotYetImplementedException("getCurrentBan", CraftBanmanagerUser.class);
+//        return null;
     }
     
     @Override
     public Punishment getCurrentMute() {
-        return null;
+        throw new NotYetImplementedException("getCurrentMute", CraftBanmanagerUser.class);
+//        return null;
     }
     
     @Override
     public UUID[] getAllPunishmentIds() {
-        return new UUID[0];
+        throw new NotYetImplementedException("getAllPunishmentIds", CraftBanmanagerUser.class);
+//        return new UUID[0];
     }
     
     @Override
