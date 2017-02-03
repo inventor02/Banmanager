@@ -7,7 +7,6 @@ import me.shawlaf.banmanager.managers.ErrorManager;
 import me.shawlaf.banmanager.managers.config.BanManagerConfiguration;
 import me.shawlaf.banmanager.managers.config.ConfigurationManager;
 import me.shawlaf.banmanager.managers.database.DatabaseManager;
-import me.shawlaf.banmanager.managers.database.sql.SqlConnectionManager;
 import me.shawlaf.banmanager.users.BanmanagerUser;
 import me.shawlaf.banmanager.util.chat.C;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
@@ -49,7 +48,7 @@ public class Banmanager extends Plugin {
     public void onLoad() {
         
         getPlugin = () -> this;
-    
+        
         Multithreading.initialize(this);
         
         if (! ensureBungeeUtil()) {
@@ -61,7 +60,7 @@ public class Banmanager extends Plugin {
             getProxy().getScheduler().schedule(this, this::disable, 1L, TimeUnit.SECONDS);
             return;
         }
-    
+        
         AsyncCatcher.disable(this);
         
         this.configurationManager = new ConfigurationManager(this);

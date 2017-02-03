@@ -1,0 +1,34 @@
+#######################################
+#            MYSQL SETTINGS           #
+#######################################
+
+mysql_user: root
+mysql_pass: ''
+mysql_host: 127.0.0.1
+mysql_port: '3306'
+mysql_database: shawlafs-banmanager
+use_mysql: false
+
+# Clear the mysql cache every X minutes
+mysql_cache_clear: 5
+
+#######################################
+#              COMMANDS               #
+#######################################
+
+commandBmInfo: bminfo
+commandHelperCap: helpercap
+commandAllowedCommands: allowedcommands
+commandPunish: bm
+commandBan: bban
+commandMute: bmute
+commandKick: bkick
+commandPermissions: permissions
+
+#######################################
+#                OTHER                #
+#######################################
+
+# Amount of milliseconds players without the permission to perm punish people can punish for
+# default: 604800000 = 1 Week
+helpercap: 604800000

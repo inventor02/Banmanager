@@ -1,0 +1,5 @@
+name: Banmanager
+main: me.shawlaf.banmanager.Banmanager
+version: 2.0.3
+author: shawlaf
+softdepends: ['BungeeUtil']

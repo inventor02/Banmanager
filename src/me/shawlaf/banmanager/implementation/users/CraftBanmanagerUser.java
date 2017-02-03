@@ -30,7 +30,7 @@ public class CraftBanmanagerUser implements BanmanagerUser {
     
     
     public CraftBanmanagerUser(ProxiedPlayer player, Banmanager plugin) {
-        throw new NotYetImplementedException("Constructor", CraftBanmanagerUser.class);
+        throw new NotYetImplementedException();
 
 //        this.implementation = player;
 //        this.plugin = plugin;
@@ -40,69 +40,69 @@ public class CraftBanmanagerUser implements BanmanagerUser {
     
     @Override
     public Map<String, Object> map() {
-        throw new NotYetImplementedException("map", CraftBanmanagerUser.class);
+        throw new NotYetImplementedException();
 //        return null; // TODO
     }
     
     @Override
     public Map<Integer, Object> sqlInsertMap() {
-        throw new NotYetImplementedException("sqlInsertMap", CraftBanmanagerUser.class);
+        throw new NotYetImplementedException();
 //        return null; // TODO
     }
     
     @Override
     public Set<UUID> findAlternateAccountIds() {
-        throw new NotYetImplementedException("findAlternateAccountIds", CraftBanmanagerUser.class);
+        throw new NotYetImplementedException();
 //        return null;
     }
     
     @Override
     public void addIp(String ip) {
-        throw new NotYetImplementedException("addIp", CraftBanmanagerUser.class);
+        throw new NotYetImplementedException();
     }
     
     @Override
     public boolean hasSimilarIps(UUID otherUser) {
-        throw new NotYetImplementedException("hasSimilarIps", CraftBanmanagerUser.class);
+        throw new NotYetImplementedException();
 //        return false;
     }
     
     @Override
     public void purgePunishments() {
-        throw new NotYetImplementedException("purgePunishments", CraftBanmanagerUser.class);
+        throw new NotYetImplementedException();
     }
     
     @Override
     public void setAdmin(boolean state) {
-        throw new NotYetImplementedException("setAdmin", CraftBanmanagerUser.class);
+        throw new NotYetImplementedException();
     }
     
     @Override
     public boolean isAdmin() {
-        throw new NotYetImplementedException("isAdmin", CraftBanmanagerUser.class);
+        throw new NotYetImplementedException();
 //        return false;
     }
     
     @Override
     public void addPunishment() {
-        throw new NotYetImplementedException("addPunishment", CraftBanmanagerUser.class);
+        throw new NotYetImplementedException();
     }
     
     @Override
     public Punishment getCurrentBan() {
-        throw new NotYetImplementedException("getCurrentBan", CraftBanmanagerUser.class);
+        throw new NotYetImplementedException();
 //        return null;
     }
     
     @Override
     public Punishment getCurrentMute() {
-        throw new NotYetImplementedException("getCurrentMute", CraftBanmanagerUser.class);
+        throw new NotYetImplementedException();
 //        return null;
     }
     
     @Override
     public UUID[] getAllPunishmentIds() {
-        throw new NotYetImplementedException("getAllPunishmentIds", CraftBanmanagerUser.class);
+        throw new NotYetImplementedException();
 //        return new UUID[0];
     }
     
