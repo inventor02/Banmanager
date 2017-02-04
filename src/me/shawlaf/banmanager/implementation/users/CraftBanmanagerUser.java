@@ -4,6 +4,7 @@ import me.shawlaf.banmanager.Banmanager;
 import me.shawlaf.banmanager.indev.NotYetImplementedException;
 import me.shawlaf.banmanager.punish.Punishment;
 import me.shawlaf.banmanager.users.BanmanagerUser;
+import me.shawlaf.banmanager.util.JSONUtils;
 import net.md_5.bungee.api.Callback;
 import net.md_5.bungee.api.ChatMessageType;
 import net.md_5.bungee.api.Title;
@@ -12,9 +13,12 @@ import net.md_5.bungee.api.config.ServerInfo;
 import net.md_5.bungee.api.connection.PendingConnection;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.md_5.bungee.api.connection.Server;
+import org.json.JSONArray;
+import org.json.JSONObject;
 
 import java.net.InetSocketAddress;
 import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * Created by Florian on 29.12.2016.
@@ -30,12 +34,35 @@ public class CraftBanmanagerUser implements BanmanagerUser {
     
     
     public CraftBanmanagerUser(ProxiedPlayer player, Banmanager plugin) {
+        JSONObject userObject = plugin.getDatabaseManager().getUserDatabase().getUserObject(player.getUniqueId());
+        
+        this.implementation = player;
+        this.plugin = plugin;
+        this.punishmentIds = fetchPunishmentIds();
+        this.adminStatus = userObject.optBoolean("admin", false);
+        this.knownIPs = fetchKnownIps();
+        
+        JSONArray mailArray = userObject.optJSONArray("mail");
+        
+        if (mailArray == null)
+            mailArray = new JSONArray();
+        
+        this.mail = new HashSet<>(JSONUtils.toCollection(mailArray).stream().map(Object::toString).collect(Collectors.toList()));
+        
         throw new NotYetImplementedException();
 
 //        this.implementation = player;
 //        this.plugin = plugin;
         
         
+    }
+    
+    private Set<String> fetchKnownIps() {
+        throw new NotYetImplementedException();
+    }
+    
+    private Set<UUID> fetchPunishmentIds() {
+        throw new NotYetImplementedException();
     }
     
     @Override
