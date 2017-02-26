@@ -70,6 +70,11 @@ public class Banmanager extends Plugin {
         successfulStartup = true;
     }
     
+    @Override
+    public void onDisable() {
+        getPlugin = () -> null;
+    }
+    
     private boolean ensureBungeeUtil() {
         return getProxy().getPluginManager().getPlugin("BungeeUtil") != null;
     }

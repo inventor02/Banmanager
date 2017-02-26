@@ -18,6 +18,7 @@ public class DatabaseManager {
     
     private UserDatabase userDatabase;
     private UUIDMapDatabase uuidMapDatabase;
+    private PunishmentDatabase punishmentDatabase;
     
     public DatabaseManager(Banmanager banmanager) {
         this.banmanager = banmanager;
@@ -29,6 +30,10 @@ public class DatabaseManager {
             userDatabase = new LocalUserDatabase(banmanager.getConfigurationManager().getUsersFile());
             uuidMapDatabase = new LocalUUIDMapDatabase(banmanager.getConfigurationManager().getUUUIDMapFile());
         }
+    }
+    
+    public PunishmentDatabase getPunishmentDatabase() {
+        return punishmentDatabase;
     }
     
     public Banmanager getPlugin() {

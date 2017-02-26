@@ -7,7 +7,7 @@ import dev.wolveringer.bungeeutil.item.Material;
  */
 public enum PunishmentType {
     
-    KICK(Material.IRON_DOOR), BAN(Material.BARRIER), MUTE(Material.BOOK_AND_QUILL);
+    WARNING(Material.IRON_SWORD), KICK(Material.IRON_DOOR), BAN(Material.BARRIER), MUTE(Material.BOOK_AND_QUILL);
     
     public final Material guiMaterial;
     

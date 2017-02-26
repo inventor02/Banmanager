@@ -223,8 +223,7 @@ public class CraftPunishment implements Punishment {
     }
     
     private void save() {
-        throw new NotYetImplementedException();
-//        getPlugin().getDatabaseManager().getPunishDatabase().putPunishment(getPunishmentId(), JSONUtils.toJSONObject(map())); TODO implement
+        plugin.getDatabaseManager().getPunishmentDatabase().putPunishment(punishmentId, toJSONObject());
     }
     
 }
