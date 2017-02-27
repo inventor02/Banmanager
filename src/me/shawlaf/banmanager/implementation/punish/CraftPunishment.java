@@ -1,7 +1,6 @@
 package me.shawlaf.banmanager.implementation.punish;
 
 import me.shawlaf.banmanager.Banmanager;
-import me.shawlaf.banmanager.indev.NotYetImplementedException;
 import me.shawlaf.banmanager.punish.Punishment;
 import me.shawlaf.banmanager.punish.PunishmentType;
 import me.shawlaf.banmanager.users.BanmanagerUser;
@@ -61,8 +60,7 @@ public class CraftPunishment implements Punishment {
     
     @Override
     public Map<Integer, Object> sqlInsertMap() {
-        throw new NotYetImplementedException();
-//        return null; // TODO
+        return null; // Not used
     }
     
     @Override
@@ -223,7 +221,7 @@ public class CraftPunishment implements Punishment {
     }
     
     private void save() {
-        plugin.getDatabaseManager().getPunishmentDatabase().putPunishment(punishmentId, toJSONObject());
+        plugin.getDatabaseManager().getPunishmentDatabase().putPunishment(this);
     }
     
 }

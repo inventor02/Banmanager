@@ -6,6 +6,7 @@ import me.shawlaf.banmanager.managers.database.PunishmentDatabase;
 import me.shawlaf.banmanager.managers.database.util.DatabaseDelete;
 import me.shawlaf.banmanager.managers.database.util.DatabaseInsert;
 import me.shawlaf.banmanager.managers.database.util.DatabaseQuery;
+import me.shawlaf.banmanager.managers.database.util.DatabaseUpdate;
 import org.json.JSONObject;
 
 import java.sql.ResultSet;
@@ -76,7 +77,8 @@ public class MysqlPunishmentDatabase extends AbstractSqlTable implements Punishm
     @Override
     public void putPunishment(UUID punishmentId, JSONObject object) {
         try {
-            DatabaseInsert.create().put(
+            
+            Object[] values = new Object[] {
                     object.getString("reason"),
                     object.getString("offender"),
                     object.getString("moderator"),
@@ -89,7 +91,15 @@ public class MysqlPunishmentDatabase extends AbstractSqlTable implements Punishm
                     object.optString("removedBy"),
                     object.has("removeWhen"),
                     object.optLong("length")
-            ).execute(this);
+            };
+            
+            if (! doesPunishmentExist(punishmentId)) {
+                DatabaseInsert.create().put(values).execute(this);
+            } else {
+                DatabaseUpdate.create().checkColumns("id").checkValues(punishmentId.toString())
+                        .updateColumns("reason", "offender", "moderator", "dateCreated", "type", "id", "modip", "removeReason", "dateRemoved", "removedBy", "scheduledRemove", "length")
+                        .updateValues(values).execute(this);
+            }
         } catch (SQLException e) {
             e.printStackTrace();
         }

@@ -19,6 +19,10 @@ public interface PunishmentDatabase {
     boolean doesPunishmentExist(UUID punishmentId);
     
     default void wipePunishment(Punishment punishment) {
-        
+        wipePunishment(punishment.getPunishmentId());
+    }
+    
+    default void putPunishment(Punishment punishment) {
+        putPunishment(punishment.getPunishmentId(), punishment.toJSONObject());
     }
 }
