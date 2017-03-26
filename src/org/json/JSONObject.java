@@ -907,6 +907,11 @@ public class JSONObject {
         Object o = this.opt(key);
         return o instanceof JSONArray ? (JSONArray) o : null;
     }
+    
+    public JSONArray optJSONArrayNotNull(String key) {
+        JSONArray a = optJSONArray(key);
+        return a == null ? new JSONArray() : a;
+    }
 
     /**
      * Get an optional JSONObject associated with a key. It returns null if

@@ -1,6 +1,7 @@
 package me.shawlaf.banmanager.managers.database.punish;
 
 import me.shawlaf.banmanager.managers.database.AbstractSqlTable;
+import me.shawlaf.banmanager.managers.database.AbstractUpdatedSqlTable;
 import me.shawlaf.banmanager.managers.database.DatabaseManager;
 import me.shawlaf.banmanager.managers.database.PunishmentDatabase;
 import me.shawlaf.banmanager.managers.database.util.DatabaseDelete;
@@ -11,15 +12,34 @@ import org.json.JSONObject;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.UUID;
 
 /**
  * Created by Florian on 26.02.2017.
  */
-public class MysqlPunishmentDatabase extends AbstractSqlTable implements PunishmentDatabase {
+public class MysqlPunishmentDatabase extends AbstractUpdatedSqlTable implements PunishmentDatabase {
     
     public MysqlPunishmentDatabase(DatabaseManager databaseManager, String table) {
         super(databaseManager, table);
+    }
+    
+    @Override
+    protected boolean isOldFormat(String[][] columns) {
+        return columns[0][0].equals("uuid") && columns[0][1].equals("varchar(36)") && columns[1][0].equals("obj") && columns[1][1].equals("longtext");
+    }
+    
+    @Override
+    protected DatabaseInsert[] convertToNew(ResultSet old) throws SQLException {
+        Set<DatabaseInsert> updates = new HashSet<>();
+        
+        while (old.next()) {
+            JSONObject punishmentObject = new JSONObject(old.getString("obj"));
+            updates.add(toInsert(UUID.fromString(old.getString("uuid")), punishmentObject));
+        }
+        
+        return updates.toArray(new DatabaseInsert[updates.size()]);
     }
     
     @Override
@@ -72,6 +92,25 @@ public class MysqlPunishmentDatabase extends AbstractSqlTable implements Punishm
         } catch (SQLException e) {
             e.printStackTrace();
         }
+    }
+    
+    public DatabaseInsert toInsert(UUID punishmentId, JSONObject object) {
+        Object[] values = new Object[] {
+                object.getString("reason"),
+                object.getString("offender"),
+                object.getString("moderator"),
+                object.getLong("dateCreated"),
+                object.getInt("type"),
+                object.getString("id"),
+                object.getString("modip"),
+                object.optString("removeReason"),
+                object.optLong("dateRemoved"),
+                object.optString("removedBy"),
+                object.has("removeWhen"),
+                object.optLong("length")
+        };
+        
+        return DatabaseInsert.create().put(values);
     }
     
     @Override
