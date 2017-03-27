@@ -80,7 +80,7 @@ public class MysqlIPSDatabase extends AbstractUpdatedSqlTable implements IPSData
     
     @Override
     protected boolean isOldFormat(String[][] columns) {
-        return columns[0][0].equals("uuid") && columns[0][1].equals("varchar(36)") && columns[1][0].equals("array") && columns[1][1].equals("longtext");
+        return columns.length == 2 && columns[0][0].equals("uuid") && columns[0][1].equals("VARCHAR") && columns[1][0].equals("array") && columns[1][1].equals("LONGTEXT");
     }
     
     @Override

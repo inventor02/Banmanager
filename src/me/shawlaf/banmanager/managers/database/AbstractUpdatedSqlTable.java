@@ -4,8 +4,8 @@ import me.shawlaf.banmanager.managers.database.util.DatabaseInsert;
 import me.shawlaf.banmanager.managers.database.util.DatabaseQuery;
 import net.md_5.bungee.api.ProxyServer;
 
+import java.sql.DatabaseMetaData;
 import java.sql.ResultSet;
-import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 
 /**
@@ -20,40 +20,48 @@ public abstract class AbstractUpdatedSqlTable extends AbstractSqlTable {
             ResultSet allTables = connection().prepareStatement("SHOW TABLES;").executeQuery();
             
             while (allTables.next()) {
-                if (table.equals(allTables.getString(1))) {
+                
+                if (! allTables.getString(1).equals(table))
+                    continue;
+                
+                DatabaseMetaData databaseMetaData = connection().getMetaData();
+                ResultSet columnsSet = databaseMetaData.getColumns(null, null, allTables.getString(1), null);
+                
+                int amountOfColumns = 0;
+                
+                while (columnsSet.next())
+                    amountOfColumns++;
+                
+                columnsSet.beforeFirst();
+                
+                String[][] columns = new String[amountOfColumns][];
+                
+                int i = 0;
+                
+                while (columnsSet.next()) {
+                    columns[i] = new String[2];
+                    columns[i][0] = columnsSet.getString("COLUMN_NAME");
+                    columns[i++][1] = columnsSet.getString("TYPE_NAME");
+                }
+                
+                if (isOldFormat(columns)) {
+                    ProxyServer.getInstance().getLogger().info("Converting old " + table + " Table to the new format");
+                    ResultSet entireOldTable = DatabaseQuery.create().selectColumns(DatabaseQuery.SELECT_ALL).executeQuery(connection(), allTables.getString(1));
                     
-                    ResultSet entireTable = DatabaseQuery.create().selectColumns(DatabaseQuery.SELECT_ALL).executeQuery(this);
+                    DatabaseInsert[] insertsToExecute = convertToNew(entireOldTable);
                     
-                    ResultSetMetaData resultSetMetaData = entireTable.getMetaData();
+                    connection().prepareStatement("DROP TABLE " + table + ";").executeUpdate();
+                    connection().prepareStatement("CREATE TABLE IF NOT EXISTS " + table + " (" + tableParams() + ");").executeUpdate();
                     
-                    int amountOfColumns = resultSetMetaData.getColumnCount();
-                    String[][] columns = new String[amountOfColumns][];
-                    
-                    for (int i = 1; i <= amountOfColumns; i++) {
-                        columns[i - 1][0] = resultSetMetaData.getColumnName(i);
-                        columns[i - 1][1] = resultSetMetaData.getColumnTypeName(i);
-                    }
-                    
-                    if (isOldFormat(columns)) {
-                        ProxyServer.getInstance().getLogger().info("Converting old " + table + " Table to the new format");
-                        entireTable.beforeFirst();
-                        
-                        DatabaseInsert[] insertsToExecute = convertToNew(entireTable);
-                        
-                        connection().prepareStatement("DROP TABLE " + table + ";").executeUpdate();
-                        connection().prepareStatement("CREATE TABLE IF NOT EXISTS " + table + " (" + tableParams() + ");");
-                        
-                        for (DatabaseInsert i : insertsToExecute) {
-                            try {
-                                i.execute(this);
-                            } catch (Exception e) {
-                                e.printStackTrace();
-                            }
+                    for (DatabaseInsert insert : insertsToExecute) {
+                        try {
+                            insert.execute(this);
+                        } catch (Exception e) {
+                            e.printStackTrace();
                         }
-                        
-                        ProxyServer.getInstance().getLogger().info("Converted old " + table + " Table to the new format");
                     }
                     
+                    ProxyServer.getInstance().getLogger().info("Converted old " + table + " Table to the new format");
                     break;
                 }
             }

@@ -1,6 +1,5 @@
 package me.shawlaf.banmanager.managers.database.punish;
 
-import me.shawlaf.banmanager.managers.database.AbstractSqlTable;
 import me.shawlaf.banmanager.managers.database.AbstractUpdatedSqlTable;
 import me.shawlaf.banmanager.managers.database.DatabaseManager;
 import me.shawlaf.banmanager.managers.database.PunishmentDatabase;
@@ -27,7 +26,7 @@ public class MysqlPunishmentDatabase extends AbstractUpdatedSqlTable implements 
     
     @Override
     protected boolean isOldFormat(String[][] columns) {
-        return columns[0][0].equals("uuid") && columns[0][1].equals("varchar(36)") && columns[1][0].equals("obj") && columns[1][1].equals("longtext");
+        return columns.length == 2 && columns[0][0].equals("uuid") && columns[0][1].equals("VARCHAR") && columns[1][0].equals("obj") && columns[1][1].equals("LONGTEXT");
     }
     
     @Override
@@ -102,7 +101,7 @@ public class MysqlPunishmentDatabase extends AbstractUpdatedSqlTable implements 
                 object.getLong("dateCreated"),
                 object.getInt("type"),
                 object.getString("id"),
-                object.getString("modip"),
+                object.optString("modip"),
                 object.optString("removeReason"),
                 object.optLong("dateRemoved"),
                 object.optString("removedBy"),

@@ -27,6 +27,7 @@ public class DatabaseManager {
     
     public DatabaseManager(Banmanager banmanager) {
         this.banmanager = banmanager;
+        this.connectionManager = new SqlConnectionManager(banmanager.getConfiguration());
         
         if (banmanager.getConfiguration().isUsingMysql()) {
             uuidMapDatabase = new MysqlUUIDMapDatabase(this, "uuids");

@@ -64,6 +64,16 @@ public class Banmanager extends Plugin {
         AsyncCatcher.disable(this);
         
         this.configurationManager = new ConfigurationManager(this);
+        
+        if (!configurationManager.loadConfiguration()) {
+            getLogger().severe(C.RED + "-------------------------------------------------------------------------------------------------------------------------");
+            getLogger().severe(C.RED + "	[Shawlaf's Banmanager] FAILED TO LOAD CONFIGURATION FILES");
+            getLogger().severe(C.RED + "-------------------------------------------------------------------------------------------------------------------------");
+    
+            getProxy().getScheduler().schedule(this, this::disable, 1L, TimeUnit.SECONDS);
+            return;
+        }
+        
         this.errorManager = new ErrorManager(this);
         this.databaseManager = new DatabaseManager(this);
         

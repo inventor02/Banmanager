@@ -2,7 +2,6 @@ package me.shawlaf.banmanager.managers.config;
 
 import com.google.common.io.ByteStreams;
 import me.shawlaf.banmanager.Banmanager;
-import me.shawlaf.banmanager.managers.config.uuids.LocalUUIDMapDatabase;
 import net.md_5.bungee.config.Configuration;
 import net.md_5.bungee.config.ConfigurationProvider;
 import net.md_5.bungee.config.YamlConfiguration;

@@ -37,7 +37,7 @@ public class MysqlUserDatabase extends AbstractUpdatedSqlTable implements UserDa
     
     @Override
     protected boolean isOldFormat(String[][] columns) {
-        return columns[0][0].equals("uuid") && columns[0][1].equals("varchar(36)") && columns[1][0].equals("obj") && columns[1][1].equals("longtext");
+        return columns.length == 2 && columns[0][0].equals("uuid") && columns[0][1].equals("VARCHAR") && columns[1][0].equals("obj") && columns[1][1].equals("LONGTEXT");
     }
     
     @Override
@@ -47,6 +47,9 @@ public class MysqlUserDatabase extends AbstractUpdatedSqlTable implements UserDa
         
         while (old.next())
             oldDatabase.add(new JSONObject(old.getString("obj")));
+        
+        for (JSONObject oldObject : oldDatabase)
+            System.out.println(oldObject.toString(0));
         
         for (JSONObject object : oldDatabase)
             databaseInsertSet.add(toInsert(object));
@@ -90,12 +93,9 @@ public class MysqlUserDatabase extends AbstractUpdatedSqlTable implements UserDa
     }
     
     private DatabaseInsert toInsert(JSONObject object) throws SQLException {
-        JSONArray jsonArrayMail = object.optJSONArray("mail");
-        Collection<Object> mailCollection = JSONUtils.toCollection(jsonArrayMail == null ? new JSONArray() : jsonArrayMail);
+        JSONArray jsonArrayMail = object.optJSONArrayNotNull("mail");
         
-        String[] mail = (String[]) mailCollection.stream().map(Object::toString).toArray();
-        
-        return DatabaseInsert.create().put(object.getString("name"), object.getString("uuid"), object.getBoolean("admin"), connection().createArrayOf("longtext", mail));
+        return DatabaseInsert.create().put(object.getString("name"), object.getString("uuid"), object.getBoolean("admin"), jsonArrayMail.toString(0));
     }
     
     @Override
@@ -127,6 +127,6 @@ public class MysqlUserDatabase extends AbstractUpdatedSqlTable implements UserDa
     
     @Override
     protected String tableParams() {
-        return "name varchar(16), uuid varchar(36), admin tinyint(1), mail json";
+        return "name varchar(16), uuid varchar(36), admin tinyint(1), mail longtext";
     }
 }
