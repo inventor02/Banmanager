@@ -1,18 +1,19 @@
 package me.shawlaf.banmanager.gui;
 
 import dev.wolveringer.bungeeutil.inventory.Inventory;
+import dev.wolveringer.bungeeutil.item.ItemStack;
+import dev.wolveringer.bungeeutil.player.Player;
 import net.md_5.bungee.api.plugin.Plugin;
 
-import java.util.HashSet;
-import java.util.Set;
-import java.util.UUID;
+import java.util.function.Consumer;
+import java.util.function.Function;
 
 /**
  * Created by Florian on 27.03.2017.
  */
 public class UserInterface { // TODO FINISH THIS
     
-    private Set<UUID> canSafeClose = new HashSet<>();
+    public InventoryStyle style = new InventoryStyle() {};
     protected final Inventory inventory;
     protected final String title;
     
@@ -46,6 +47,107 @@ public class UserInterface { // TODO FINISH THIS
                 return i;
         }
         
-        return -1;
+        return - 1;
     }
+    
+    public final void putItem(ItemStackBuilder builder, int row, int slot) {
+        putItem(builder, MenuUtil.guiPosition(row, slot));
+    }
+    
+    public final void putItem(ItemStackBuilder builder, int slot) {
+        inventory.setItem(slot, builder.build());
+    }
+    
+    public final void putItem(ItemStack itemStack, int row, int slot) {
+        putItem(itemStack, MenuUtil.guiPosition(row, slot));
+    }
+    
+    public final void putItem(ItemStack itemStack, int slot) {
+        inventory.setItem(slot, itemStack);
+    }
+    
+    public final void addItem(ItemStackBuilder builder) {
+        inventory.addItem(builder.build());
+    }
+    
+    public final void addItem(ItemStack itemStack) {
+        inventory.addItem(itemStack);
+    }
+    
+    public void open(Player player) {
+        player.openInventory(inventory);
+    }
+    
+    public void putBackButton(UserInterface back) {
+        putItem(style.makeBackButton(c -> back.open(c.getPlayer())), lastSlot());
+    }
+    
+    public void putBackButton(UserInterface back, int row, int slot) {
+        putItem(style.makeBackButton(c -> back.open(c.getPlayer())), row, slot);
+    }
+    
+    public void putBackButton(UserInterface back, int slot) {
+        putItem(style.makeBackButton(c -> back.open(c.getPlayer())), slot);
+    }
+    
+    public void putBackButton(UserInterface back, InventoryStyle style) {
+        putItem(style.makeBackButton(c -> back.open(c.getPlayer())), lastSlot());
+    }
+    
+    public void putBackButton(UserInterface back, int row, int slot, InventoryStyle style) {
+        putItem(style.makeBackButton(c -> back.open(c.getPlayer())), row, slot);
+    }
+    
+    public void putBackButton(UserInterface back, int slot, InventoryStyle style) {
+        putItem(style.makeBackButton(c -> back.open(c.getPlayer())), slot);
+    }
+    
+    public void putBackButton(UserInterface back, Function<Consumer<ItemStack.Click>, ItemStack> makeBackButton) {
+        putItem(makeBackButton.apply((c -> back.open(c.getPlayer()))), lastSlot());
+    }
+    
+    public void putBackButton(UserInterface back, int row, int slot, Function<Consumer<ItemStack.Click>, ItemStack> makeBackButton) {
+        putItem(makeBackButton.apply((c -> back.open(c.getPlayer()))), row, slot);
+    }
+    
+    public void putBackButton(UserInterface back, int slot, Function<Consumer<ItemStack.Click>, ItemStack> makeBackButton) {
+        putItem(makeBackButton.apply((c -> back.open(c.getPlayer()))), slot);
+    }
+    
+    public void putCloseButton() {
+        putItem(style.makeCloseButton(c -> c.getPlayer().closeInventory()), lastSlot());
+    }
+    
+    public void putCloseButton(int row, int slot) {
+        putItem(style.makeCloseButton(c -> c.getPlayer().closeInventory()), row, slot);
+    }
+    
+    public void putCloseButton(int slot) {
+        putItem(style.makeCloseButton(c -> c.getPlayer().closeInventory()), slot);
+    }
+    
+    public void putCloseButton(InventoryStyle style) {
+        putItem(style.makeCloseButton(c -> c.getPlayer().closeInventory()), lastSlot());
+    }
+    
+    public void putCloseButton(int row, int slot, InventoryStyle style) {
+        putItem(style.makeCloseButton(c -> c.getPlayer().closeInventory()), row, slot);
+    }
+    
+    public void putCloseButton(int slot, InventoryStyle style) {
+        putItem(style.makeCloseButton(c -> c.getPlayer().closeInventory()), slot);
+    }
+    
+    public void putCloseButton(Function<Consumer<ItemStack.Click>, ItemStack> makeCloseButton) {
+        putItem(makeCloseButton.apply((c -> c.getPlayer().closeInventory())), lastSlot());
+    }
+    
+    public void putCloseButton(int row, int slot, Function<Consumer<ItemStack.Click>, ItemStack> makeCloseButton) {
+        putItem(makeCloseButton.apply((c -> c.getPlayer().closeInventory())), row, slot);
+    }
+    
+    public void putCloseButton(int slot, Function<Consumer<ItemStack.Click>, ItemStack> makeCloseButton) {
+        putItem(makeCloseButton.apply((c -> c.getPlayer().closeInventory())), slot);
+    }
+    
 }
