@@ -11,7 +11,7 @@ import java.util.function.Function;
 /**
  * Created by Florian on 27.03.2017.
  */
-public class UserInterface { // TODO FINISH THIS
+public class UserInterface {
     
     public InventoryStyle style = new InventoryStyle() {};
     protected final Inventory inventory;
@@ -31,6 +31,19 @@ public class UserInterface { // TODO FINISH THIS
         this.updateOnClick = updateOnClick;
         this.title = title;
         this.inventory = new Inventory(size, title, false); // We already checked the size, no need to let BungeeUtil do it again
+        
+        update();
+    }
+    
+    
+    public final void update() {
+        inventory.clear();
+        fill();
+        inventory.updateInventory();
+    }
+    
+    protected void fill() {
+        
     }
     
     public void clear() {

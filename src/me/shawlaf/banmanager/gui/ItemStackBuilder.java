@@ -3,6 +3,7 @@ package me.shawlaf.banmanager.gui;
 import dev.wolveringer.bungeeutil.item.ItemStack;
 import dev.wolveringer.bungeeutil.item.Material;
 import dev.wolveringer.bungeeutil.item.meta.SkullMeta;
+import me.shawlaf.banmanager.async.Multithreading;
 
 import java.util.Arrays;
 import java.util.LinkedList;
@@ -29,31 +30,35 @@ public class ItemStackBuilder { // TODO MAKE THIS
         this(builder.itemStack);
     }
     
-    private ItemStackBuilder(Material material, Consumer<ItemStack.Click> clickHandler) {
-        this(material, 1, clickHandler);
+    private ItemStackBuilder(Material material, UserInterface userInterface, Consumer<ItemStack.Click> clickHandler) {
+        this(material, 1, userInterface, clickHandler);
     }
     
     private ItemStackBuilder(Material material) {
         this(material, 1);
     }
     
-    private ItemStackBuilder(Material material, int amount, Consumer<ItemStack.Click> clickHandler) {
-        this(material, amount, 0, clickHandler);
+    private ItemStackBuilder(Material material, int amount, UserInterface userInterface, Consumer<ItemStack.Click> clickHandler) {
+        this(material, amount, 0, userInterface, clickHandler);
     }
     
     private ItemStackBuilder(Material material, int amount) {
-        this(material, amount, 0);
+        this(material, amount, 0, null);
     }
     
-    private ItemStackBuilder(Material material, int amount, int damage) {
-        this(material, amount, damage, c -> {});
+    private ItemStackBuilder(Material material, int amount, int damage, UserInterface userInterface) {
+        this(material, amount, damage, userInterface, c -> {});
     }
     
-    private ItemStackBuilder(Material material, int amount, int damage, Consumer<ItemStack.Click> clickHandler) {
+    private ItemStackBuilder(Material material, int amount, int damage, UserInterface userInterface, Consumer<ItemStack.Click> clickHandler) {
         this(new ItemStack(material, amount, (short) damage) {
             @Override
             public void click(Click click) {
                 clickHandler.accept(click);
+                
+                if (userInterface != null && userInterface.updateOnClick) {
+                    Multithreading.runAsync(userInterface::update);
+                }
             }
         });
         
@@ -64,16 +69,16 @@ public class ItemStackBuilder { // TODO MAKE THIS
         return new ItemStackBuilder(material);
     }
     
-    public static ItemStackBuilder build(Material material, Consumer<ItemStack.Click> clickHandler) {
-        return new ItemStackBuilder(material, clickHandler);
+    public static ItemStackBuilder build(Material material, UserInterface userInterface, Consumer<ItemStack.Click> clickHandler) {
+        return new ItemStackBuilder(material, userInterface, clickHandler);
     }
     
     public static ItemStack buildStack(Material material) {
         return build(material).build();
     }
     
-    public static ItemStack buildStack(Material material, Consumer<ItemStack.Click> clickHandler) {
-        return build(material, clickHandler).build();
+    public static ItemStack buildStack(Material material, UserInterface userInterface, Consumer<ItemStack.Click> clickHandler) {
+        return build(material, userInterface, clickHandler).build();
     }
     
     public static ItemStackBuilder fromExistingStack(ItemStack stack) {
@@ -84,24 +89,24 @@ public class ItemStackBuilder { // TODO MAKE THIS
         return new ItemStackBuilder(material, amount);
     }
     
-    public static ItemStackBuilder build(Material material, int amount, Consumer<ItemStack.Click> clickHandler) {
-        return new ItemStackBuilder(material, amount, clickHandler);
+    public static ItemStackBuilder build(Material material, int amount, UserInterface userInterface, Consumer<ItemStack.Click> clickHandler) {
+        return new ItemStackBuilder(material, amount, userInterface, clickHandler);
     }
     
     public static ItemStackBuilder build(Material material, int amount, int damage) {
-        return new ItemStackBuilder(material, amount, damage);
+        return new ItemStackBuilder(material, amount, damage, null);
     }
     
-    public static ItemStackBuilder build(Material material, int amount, int damage, Consumer<ItemStack.Click> clickHandler) {
-        return new ItemStackBuilder(material, amount, damage, clickHandler);
+    public static ItemStackBuilder build(Material material, int amount, int damage, UserInterface userInterface, Consumer<ItemStack.Click> clickHandler) {
+        return new ItemStackBuilder(material, amount, damage, userInterface, clickHandler);
     }
     
     public static ItemStackBuilder makeSkull(UUID uuid) {
         return build(Material.SKULL_ITEM, 1, 3).skullOwner(uuid);
     }
     
-    public static ItemStackBuilder makeSkull(UUID uuid, Consumer<ItemStack.Click> clickHandler) {
-        return build(Material.SKULL_ITEM, 1, 3, clickHandler).skullOwner(uuid);
+    public static ItemStackBuilder makeSkull(UUID uuid, UserInterface userInterface, Consumer<ItemStack.Click> clickHandler) {
+        return build(Material.SKULL_ITEM, 1, 3, userInterface, clickHandler).skullOwner(uuid);
     }
     
     public Material getType() {
