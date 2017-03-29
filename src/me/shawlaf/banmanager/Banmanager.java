@@ -7,6 +7,7 @@ import me.shawlaf.banmanager.managers.ErrorManager;
 import me.shawlaf.banmanager.managers.config.BanManagerConfiguration;
 import me.shawlaf.banmanager.managers.config.ConfigurationManager;
 import me.shawlaf.banmanager.managers.database.DatabaseManager;
+import me.shawlaf.banmanager.permissions.Permission;
 import me.shawlaf.banmanager.users.BanmanagerUser;
 import me.shawlaf.banmanager.util.chat.C;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
@@ -26,7 +27,7 @@ public class Banmanager extends Plugin {
     private static final Set<BanmanagerUser> online = new HashSet<>();
     private static Supplier<Banmanager> getPlugin = () -> null;
     
-    public static BanmanagerUser get(ProxiedPlayer player) {
+    public static BanmanagerUser getUser(ProxiedPlayer player) {
         
         if (player == null)
             return null;
@@ -65,11 +66,11 @@ public class Banmanager extends Plugin {
         
         this.configurationManager = new ConfigurationManager(this);
         
-        if (!configurationManager.loadConfiguration()) {
+        if (! configurationManager.loadConfiguration()) {
             getLogger().severe(C.RED + "-------------------------------------------------------------------------------------------------------------------------");
             getLogger().severe(C.RED + "	[Shawlaf's Banmanager] FAILED TO LOAD CONFIGURATION FILES");
             getLogger().severe(C.RED + "-------------------------------------------------------------------------------------------------------------------------");
-    
+            
             getProxy().getScheduler().schedule(this, this::disable, 1L, TimeUnit.SECONDS);
             return;
         }
@@ -117,7 +118,7 @@ public class Banmanager extends Plugin {
         return databaseManager;
     }
     
-    public boolean hasPermission(BanmanagerUser banmanagerUser, String punishmentInfoViewIp) {
-        return true; // TODO
+    public boolean hasPermission(ProxiedPlayer player, Permission permission) {
+        return player.hasPermission(permission.getPermissionNode());
     }
 }

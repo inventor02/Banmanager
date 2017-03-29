@@ -34,14 +34,11 @@ public abstract class AbstractUpdatedSqlTable extends AbstractSqlTable {
                 
                 columnsSet.beforeFirst();
                 
-                String[][] columns = new String[amountOfColumns][];
+                String[][] columns = new String[amountOfColumns][2];
                 
-                int i = 0;
-                
-                while (columnsSet.next()) {
-                    columns[i] = new String[2];
+                for (int i = 0; columnsSet.next(); i++) {
                     columns[i][0] = columnsSet.getString("COLUMN_NAME");
-                    columns[i++][1] = columnsSet.getString("TYPE_NAME");
+                    columns[i][1] = columnsSet.getString("TYPE_NAME");
                 }
                 
                 if (isOldFormat(columns)) {

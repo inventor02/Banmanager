@@ -209,7 +209,7 @@ public class CraftPunishment implements Punishment {
             removeReason = null;
             dateRemoved = 0;
             
-            BanmanagerUser player = Banmanager.get(ProxyServer.getInstance().getPlayer(getOffenderUUID()));
+            BanmanagerUser player = Banmanager.getUser(ProxyServer.getInstance().getPlayer(getOffenderUUID()));
             
             if (player != null && type == PunishmentType.BAN) {
                 player.disconnect(generateLoginMessage());
