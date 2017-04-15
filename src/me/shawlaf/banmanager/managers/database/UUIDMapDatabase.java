@@ -13,4 +13,12 @@ public interface UUIDMapDatabase {
     UUID getUUID(String name);
     
     String getName(UUID uuid);
+    
+    default boolean hasName(String name) {
+        return getUUID(name) != null;
+    }
+    
+    default boolean hasUUID(UUID uuid) {
+        return getName(uuid) != null;
+    }
 }

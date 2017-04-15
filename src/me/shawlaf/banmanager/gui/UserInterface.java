@@ -3,6 +3,7 @@ package me.shawlaf.banmanager.gui;
 import dev.wolveringer.bungeeutil.inventory.Inventory;
 import dev.wolveringer.bungeeutil.item.ItemStack;
 import dev.wolveringer.bungeeutil.player.Player;
+import me.shawlaf.banmanager.Banmanager;
 import net.md_5.bungee.api.plugin.Plugin;
 
 import java.util.function.Consumer;
@@ -16,10 +17,11 @@ public class UserInterface {
     public InventoryStyle style = new InventoryStyle() {};
     protected final Inventory inventory;
     protected final String title;
+    protected final Banmanager plugin;
     
     public boolean updateOnClick = false;
     
-    public UserInterface(Plugin plugin, String title, int size, boolean updateOnClick) {
+    public UserInterface(Banmanager plugin, String title, int size, boolean updateOnClick) {
         if (size <= 0 || size % 9 != 0) {
             throw new IllegalArgumentException("Inventory size may only be a positive multiple of 9! (Given: " + size + ")");
         }
@@ -27,7 +29,8 @@ public class UserInterface {
         if (title != null && title.length() > 32) {
             throw new IllegalArgumentException("Inventory title length may not exceed the length of 32! (Given:" + title.length() + ")");
         }
-        
+    
+        this.plugin = plugin;
         this.updateOnClick = updateOnClick;
         this.title = title;
         this.inventory = new Inventory(size, title, false); // We already checked the size, no need to let BungeeUtil do it again
@@ -92,27 +95,27 @@ public class UserInterface {
     }
     
     public void putBackButton(UserInterface back) {
-        putItem(style.makeBackButton(c -> back.open(c.getPlayer())), lastSlot());
+        putItem(style.makeBackButton(c -> back.open(c.getPlayer()), this), lastSlot());
     }
     
     public void putBackButton(UserInterface back, int row, int slot) {
-        putItem(style.makeBackButton(c -> back.open(c.getPlayer())), row, slot);
+        putItem(style.makeBackButton(c -> back.open(c.getPlayer()), this), row, slot);
     }
     
     public void putBackButton(UserInterface back, int slot) {
-        putItem(style.makeBackButton(c -> back.open(c.getPlayer())), slot);
+        putItem(style.makeBackButton(c -> back.open(c.getPlayer()), this), slot);
     }
     
     public void putBackButton(UserInterface back, InventoryStyle style) {
-        putItem(style.makeBackButton(c -> back.open(c.getPlayer())), lastSlot());
+        putItem(style.makeBackButton(c -> back.open(c.getPlayer()), this), lastSlot());
     }
     
     public void putBackButton(UserInterface back, int row, int slot, InventoryStyle style) {
-        putItem(style.makeBackButton(c -> back.open(c.getPlayer())), row, slot);
+        putItem(style.makeBackButton(c -> back.open(c.getPlayer()), this), row, slot);
     }
     
     public void putBackButton(UserInterface back, int slot, InventoryStyle style) {
-        putItem(style.makeBackButton(c -> back.open(c.getPlayer())), slot);
+        putItem(style.makeBackButton(c -> back.open(c.getPlayer()), this), slot);
     }
     
     public void putBackButton(UserInterface back, Function<Consumer<ItemStack.Click>, ItemStack> makeBackButton) {
@@ -128,27 +131,27 @@ public class UserInterface {
     }
     
     public void putCloseButton() {
-        putItem(style.makeCloseButton(c -> c.getPlayer().closeInventory()), lastSlot());
+        putItem(style.makeCloseButton(c -> c.getPlayer().closeInventory(), this), lastSlot());
     }
     
     public void putCloseButton(int row, int slot) {
-        putItem(style.makeCloseButton(c -> c.getPlayer().closeInventory()), row, slot);
+        putItem(style.makeCloseButton(c -> c.getPlayer().closeInventory(), this), row, slot);
     }
     
     public void putCloseButton(int slot) {
-        putItem(style.makeCloseButton(c -> c.getPlayer().closeInventory()), slot);
+        putItem(style.makeCloseButton(c -> c.getPlayer().closeInventory(), this), slot);
     }
     
     public void putCloseButton(InventoryStyle style) {
-        putItem(style.makeCloseButton(c -> c.getPlayer().closeInventory()), lastSlot());
+        putItem(style.makeCloseButton(c -> c.getPlayer().closeInventory(), this), lastSlot());
     }
     
     public void putCloseButton(int row, int slot, InventoryStyle style) {
-        putItem(style.makeCloseButton(c -> c.getPlayer().closeInventory()), row, slot);
+        putItem(style.makeCloseButton(c -> c.getPlayer().closeInventory(), this), row, slot);
     }
     
     public void putCloseButton(int slot, InventoryStyle style) {
-        putItem(style.makeCloseButton(c -> c.getPlayer().closeInventory()), slot);
+        putItem(style.makeCloseButton(c -> c.getPlayer().closeInventory(), this), slot);
     }
     
     public void putCloseButton(Function<Consumer<ItemStack.Click>, ItemStack> makeCloseButton) {

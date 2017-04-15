@@ -12,12 +12,12 @@ import java.util.function.Consumer;
  */
 public interface InventoryStyle {
     
-    default ItemStack makeBackButton(Consumer<ItemStack.Click> clickHandler) {
-        return ItemStackBuilder.build(Material.ARROW, clickHandler).displayName(C.RED + "Back").build();
+    default ItemStack makeBackButton(Consumer<ItemStack.Click> clickHandler, UserInterface userInterface) {
+        return ItemStackBuilder.build(Material.ARROW, userInterface, clickHandler).displayName(C.RED + "Back").build();
     }
     
-    default ItemStack makeCloseButton(Consumer<ItemStack.Click> clickHandler) {
-        return ItemStackBuilder.build(Material.WOOL, 1, WoolColors.RED, clickHandler).displayName("Close").build();
+    default ItemStack makeCloseButton(Consumer<ItemStack.Click> clickHandler, UserInterface userInterface) {
+        return ItemStackBuilder.build(Material.WOOL, 1, WoolColors.RED, userInterface, clickHandler).displayName("Close").build();
     }
     
     

@@ -20,7 +20,7 @@ public class ItemStackBuilder { // TODO MAKE THIS
     private ItemStack itemStack;
     private Consumer<ItemStack.Click> clickHandler;
     
-    private ItemStackBuilder() {}
+    private ItemStackBuilder(Material material, Consumer<ItemStack.Click> clickHandler) {}
     
     private ItemStackBuilder(ItemStack stack) {
         this.itemStack = stack;
@@ -83,6 +83,10 @@ public class ItemStackBuilder { // TODO MAKE THIS
     
     public static ItemStackBuilder fromExistingStack(ItemStack stack) {
         return stack != null ? new ItemStackBuilder(stack) : null;
+    }
+    
+    public static ItemStackBuilder build(Material material, Consumer<ItemStack.Click> clickHandler) {
+        return new ItemStackBuilder(material, clickHandler);
     }
     
     public static ItemStackBuilder build(Material material, int amount) {
@@ -151,7 +155,8 @@ public class ItemStackBuilder { // TODO MAKE THIS
         ItemStack newStack = new ItemStack(itemStack.getType(), itemStack.getAmount(), itemStack.getDurability()) {
             @Override
             public void click(Click click) {
-                clickHandler.accept(click);
+                if (clickHandler != null)
+                    clickHandler.accept(click);
             }
         };
         
@@ -162,6 +167,9 @@ public class ItemStackBuilder { // TODO MAKE THIS
         return newStack;
     }
     
+    public ItemStackBuilder copy() {
+        return fromExistingStack(copyItemStack(itemStack, clickHandler));
+    }
     
     @Deprecated
     private static ItemStack copyItemStack(ItemStack itemStack) {

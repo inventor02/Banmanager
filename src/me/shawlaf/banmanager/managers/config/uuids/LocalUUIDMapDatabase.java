@@ -59,4 +59,5 @@ public class LocalUUIDMapDatabase extends AbstractConfiguration implements UUIDM
     public String getName(UUID uuid) {
         return uuidToNameMap.get(uuid);
     }
+    
 }

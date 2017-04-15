@@ -1,17 +1,18 @@
 package me.shawlaf.banmanager.gui.punish.root;
 
 import dev.wolveringer.bungeeutil.item.Material;
+import me.shawlaf.banmanager.Banmanager;
 import me.shawlaf.banmanager.gui.ItemStackBuilder;
 import me.shawlaf.banmanager.gui.UserInterface;
+import me.shawlaf.banmanager.punish.PunishmentBuilder;
 import me.shawlaf.banmanager.util.chat.C;
-import net.md_5.bungee.api.plugin.Plugin;
 
 /**
  * Created by Florian on 29.03.2017.
  */
 public class RootPunishUserInterface extends UserInterface {
     
-    private ItemStackBuilder tutorial = ItemStackBuilder.build(Material.REDSTONE_TORCH_ON).displayName(C.GRAY + "How to use").lore(
+    private static final ItemStackBuilder TUTORIAL_BASE = ItemStackBuilder.build(Material.REDSTONE_TORCH_ON).displayName(C.GRAY + "How to use").lore(
             "",
             C.WHITE + "This GUI is used to punish users, in this menu you will select",
             C.WHITE + "the type of punishments and the length",
@@ -28,12 +29,19 @@ public class RootPunishUserInterface extends UserInterface {
             " ");
     
     
-    public RootPunishUserInterface(Plugin plugin, String title, int size, boolean updateOnClick) {
+    private PunishmentBuilder punishmentBuilder;
+    
+    public RootPunishUserInterface(Banmanager plugin, String title, int size, boolean updateOnClick) {
         super(plugin, title, size, updateOnClick);
     }
     
     @Override
     protected void fill() {
+        ItemStackBuilder tutorial = TUTORIAL_BASE.copy();
+        
+        if (plugin.getDatabaseManager().getUuidMapDatabase().hasName(punishmentBuilder.offender)) { // TODO also check for perms
+            // TODO add lore for specifying as admin
+        }
         
         
     }
