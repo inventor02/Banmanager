@@ -7,7 +7,8 @@ import net.md_5.bungee.api.connection.ProxiedPlayer;
 /**
  * Created by Florian on 01.01.2017.
  */
-public enum Permission {
+public enum Task {
+    
     BMINFO_USE("banmanager.punish.info.viewbasic", " \nUse the bminfo command"),
     PUNISHMENT_INFO_VIEW_IP("banmanager.punish.info.view_ip", " \nView IP of the staff member\nthat punished someone"),
     PUNISH_USE("banmanager.command.punish", " \nUse the punish command"),
@@ -33,9 +34,13 @@ public enum Permission {
     
     private static Banmanager plugin;
     
-    Permission(String permission, String description) {
+    Task(String permission, String description) {
         this.permission = permission;
         this.description = description;
+    }
+    
+    public boolean canExecute(ProxiedPlayer player) {
+        return player.hasPermission(permission);
     }
     
     public static void initialize(Banmanager banmanager) {
@@ -56,8 +61,8 @@ public enum Permission {
             if (plugin.hasPermission(player, this))
                 player.sendMessage(message);
     }
-    public static Permission fromNode(String node) {
-        for (Permission permission : values()) {
+    public static Task fromNode(String node) {
+        for (Task permission : values()) {
             if (permission.getPermissionNode().equals(node))
                 return permission;
         }

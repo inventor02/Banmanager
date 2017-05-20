@@ -4,8 +4,10 @@ import dev.wolveringer.bungeeutil.item.Material;
 import me.shawlaf.banmanager.Banmanager;
 import me.shawlaf.banmanager.gui.ItemStackBuilder;
 import me.shawlaf.banmanager.gui.UserInterface;
+import me.shawlaf.banmanager.permissions.Task;
 import me.shawlaf.banmanager.punish.PunishmentBuilder;
 import me.shawlaf.banmanager.util.chat.C;
+import net.md_5.bungee.api.connection.ProxiedPlayer;
 
 /**
  * Created by Florian on 29.03.2017.
@@ -30,17 +32,29 @@ public class RootPunishUserInterface extends UserInterface {
     
     
     private PunishmentBuilder punishmentBuilder;
+    private ProxiedPlayer moderator;
     
-    public RootPunishUserInterface(Banmanager plugin, String title, int size, boolean updateOnClick) {
-        super(plugin, title, size, updateOnClick);
+    public RootPunishUserInterface(Banmanager plugin, ProxiedPlayer moderator, PunishmentBuilder builder) {
+        super(plugin, "Punish: " + builder.offender, 6 * 9, true);
+        
+        this.moderator = moderator;
+        this.punishmentBuilder = builder;
     }
     
     @Override
     protected void fill() {
         ItemStackBuilder tutorial = TUTORIAL_BASE.copy();
         
-        if (plugin.getDatabaseManager().getUuidMapDatabase().hasName(punishmentBuilder.offender)) { // TODO also check for perms
-            // TODO add lore for specifying as admin
+        if (plugin.getDatabaseManager().getUuidMapDatabase().hasName(punishmentBuilder.offender) && Task.PUNISH_TOGGLE_ADMIN.canExecute(moderator)) {
+            tutorial.addLore("",
+                    C.WHITE + "Click the enchanted golden apple to toggle admin mode for this player",
+                    C.WHITE + "Users marked as admins cannot be punished unless admin permissions are revoked",
+                    plugin.getDatabaseManager().getUserDatabase().isAdmin(plugin.getDatabaseManager().getUuidMapDatabase().getUUID(punishmentBuilder.offender))
+                            ? C.GREEN + "This user is marked as an amdin"
+                            : C.RED + "This user is not marked as an admin"
+            );
+            
+            
         }
         
         

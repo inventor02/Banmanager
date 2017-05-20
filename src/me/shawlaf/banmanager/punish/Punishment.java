@@ -3,7 +3,7 @@ package me.shawlaf.banmanager.punish;
 import dev.wolveringer.bungeeutil.item.Material;
 import me.shawlaf.banmanager.Banmanager;
 import me.shawlaf.banmanager.managers.database.DatabaseEntry;
-import me.shawlaf.banmanager.permissions.Permission;
+import me.shawlaf.banmanager.permissions.Task;
 import me.shawlaf.banmanager.users.BanmanagerUser;
 import me.shawlaf.banmanager.util.TimeUtils;
 import me.shawlaf.banmanager.util.chat.C;
@@ -85,7 +85,7 @@ public interface Punishment extends DatabaseEntry {
         
         if (getType() == PunishmentType.KICK)
             return false;
-        if (getPlugin().hasPermission(banmanagerUser, Permission.PUNISHMENT_INFO_VIEW_IP))
+        if (getPlugin().hasPermission(banmanagerUser, Task.PUNISHMENT_INFO_VIEW_IP))
             return ! wasRemoved();
         
         return wasRemoved() ? false : getModerator().equals(banmanagerUser.getUniqueId());
@@ -102,7 +102,7 @@ public interface Punishment extends DatabaseEntry {
         lore.add(C.RED + "=== GENERAL INFO ===");
         lore.add(C.RESET + "Reason: " + C.DARK_GRAY + getReason());
         lore.add(C.RESET + "Moderator: " + C.DARK_GRAY + getPlugin().getDatabaseManager().getUuidMapDatabase().getName(getModerator()));
-        if (getPlugin().hasPermission(banmanagerUser, Permission.PUNISHMENT_INFO_VIEW_IP)) {
+        if (getPlugin().hasPermission(banmanagerUser, Task.PUNISHMENT_INFO_VIEW_IP)) {
             lore.add(C.RESET + "IP: " + C.DARK_GRAY + getModeratorIP());
         }
         if (getType() != PunishmentType.KICK) {

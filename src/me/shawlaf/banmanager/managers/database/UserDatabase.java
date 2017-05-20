@@ -21,4 +21,13 @@ public interface UserDatabase {
     
     boolean has(UUID uuid);
     
+    default boolean isAdmin(UUID uuid) {
+        JSONObject userObject = getUserObject(uuid);
+        
+        if (userObject == null)
+            return false;
+        
+        return userObject.optBoolean("admin", false);
+    }
+    
 }

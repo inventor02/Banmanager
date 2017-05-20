@@ -1,15 +1,17 @@
 package me.shawlaf.banmanager;
 
 import dev.wolveringer.bungeeutil.AsyncCatcher;
+import dev.wolveringer.bungeeutil.player.Player;
 import me.shawlaf.banmanager.async.Multithreading;
 import me.shawlaf.banmanager.implementation.users.CraftBanmanagerUser;
 import me.shawlaf.banmanager.managers.ErrorManager;
 import me.shawlaf.banmanager.managers.config.BanManagerConfiguration;
 import me.shawlaf.banmanager.managers.config.ConfigurationManager;
 import me.shawlaf.banmanager.managers.database.DatabaseManager;
-import me.shawlaf.banmanager.permissions.Permission;
+import me.shawlaf.banmanager.permissions.Task;
 import me.shawlaf.banmanager.users.BanmanagerUser;
 import me.shawlaf.banmanager.util.chat.C;
+import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.md_5.bungee.api.plugin.Plugin;
 
@@ -118,7 +120,7 @@ public class Banmanager extends Plugin {
         return databaseManager;
     }
     
-    public boolean hasPermission(ProxiedPlayer player, Permission permission) {
+    public boolean hasPermission(ProxiedPlayer player, Task permission) {
         return player.hasPermission(permission.getPermissionNode());
     }
 }
