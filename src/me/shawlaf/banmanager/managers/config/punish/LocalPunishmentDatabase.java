@@ -6,7 +6,8 @@ import org.json.JSONObject;
 
 import java.io.BufferedWriter;
 import java.io.File;
-import java.lang.annotation.Documented;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.UUID;
 
 /**
@@ -38,6 +39,21 @@ public class LocalPunishmentDatabase extends AbstractConfiguration implements Pu
     @Override
     public boolean doesPunishmentExist(UUID punishmentId) {
         return document.has(punishmentId.toString());
+    }
+    
+    @Override
+    public Set<UUID> getAllPunishmentsIds(UUID offender) {
+        Set<UUID> ids = new HashSet<>();
+        JSONObject tmp;
+        
+        for (String key : document.keySet()) {
+            
+            if ((tmp = document.getJSONObject(key)).getString("offender").equals(offender.toString())) {
+                ids.add(UUID.fromString(tmp.getString("id")));
+            }
+        }
+        
+        return ids;
     }
     
     @Override

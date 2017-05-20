@@ -155,6 +155,23 @@ public class MysqlPunishmentDatabase extends AbstractUpdatedSqlTable implements 
     }
     
     @Override
+    public Set<UUID> getAllPunishmentsIds(UUID offender) {
+        try (ResultSet set = DatabaseQuery.create().checkColumns("offender").checkValues(offender.toString()).selectColumns("id").executeQuery(this)) {
+            
+            Set<UUID> ids = new HashSet<>();
+            
+            while (set.next())
+                ids.add(UUID.fromString(set.getString("id")));
+            
+            return ids;
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        
+        return new HashSet<>();
+    }
+    
+    @Override
     protected String tableParams() {
         return "reason varchar(100), " +
                 "offender varchar(36), " +

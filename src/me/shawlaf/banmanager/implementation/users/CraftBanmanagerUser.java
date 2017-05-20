@@ -1,10 +1,13 @@
 package me.shawlaf.banmanager.implementation.users;
 
 import me.shawlaf.banmanager.Banmanager;
+import me.shawlaf.banmanager.implementation.punish.CraftPunishment;
 import me.shawlaf.banmanager.indev.NotYetImplementedException;
 import me.shawlaf.banmanager.punish.Punishment;
+import me.shawlaf.banmanager.punish.PunishmentType;
 import me.shawlaf.banmanager.users.BanmanagerUser;
 import me.shawlaf.banmanager.util.JSONUtils;
+import me.shawlaf.banmanager.util.TimeUtils;
 import net.md_5.bungee.api.Callback;
 import net.md_5.bungee.api.ChatMessageType;
 import net.md_5.bungee.api.Title;
@@ -48,8 +51,6 @@ public class CraftBanmanagerUser implements BanmanagerUser {
             mailArray = new JSONArray();
         
         this.mail = new HashSet<>(JSONUtils.toCollection(mailArray).stream().map(Object::toString).collect(Collectors.toList()));
-        
-        throw new NotYetImplementedException();
 
 //        this.implementation = player;
 //        this.plugin = plugin;
@@ -57,80 +58,124 @@ public class CraftBanmanagerUser implements BanmanagerUser {
         
     }
     
-    private Set<String> fetchKnownIps() {
+    private void save() {
         throw new NotYetImplementedException();
     }
     
+    private Set<String> fetchKnownIps() {
+        return plugin.getDatabaseManager().getIpsDatabase().getIPS(implementation.getUniqueId());
+    }
+    
     private Set<UUID> fetchPunishmentIds() {
-        throw new NotYetImplementedException();
+        return plugin.getDatabaseManager().getPunishmentDatabase().getAllPunishmentsIds(implementation.getUniqueId());
     }
     
     @Override
     public Map<String, Object> map() {
-        throw new NotYetImplementedException();
-//        return null; // TODO
+        Map<String, Object> map = new HashMap<>();
+        
+        map.put("name", implementation.getName());
+        map.put("uuid", implementation.getUniqueId().toString());
+        map.put("admin", adminStatus);
+        map.put("mail", JSONUtils.toJSONArray(mail));
+        
+        return map;
     }
     
     @Override
     public Map<Integer, Object> sqlInsertMap() {
-        throw new NotYetImplementedException();
-//        return null; // TODO
+        
+        Map<Integer, Object> map = new HashMap<>();
+        
+        map.put(1, implementation.getName());
+        map.put(2, implementation.getUniqueId().toString());
+        map.put(3, adminStatus);
+        map.put(4, JSONUtils.toJSONArray(mail).toString(0));
+        
+        return map;
     }
     
     @Override
     public Set<UUID> findAlternateAccountIds() {
-        throw new NotYetImplementedException();
-//        return null;
+        Set<UUID> allWithIP = new HashSet<>();
+        
+        for (String ip : knownIPs) {
+            allWithIP.addAll(plugin.getDatabaseManager().getIpsDatabase().getUsersWithIP(ip));
+        }
+        
+        allWithIP.remove(implementation.getUniqueId());
+        
+        return allWithIP;
     }
     
     @Override
     public void addIp(String ip) {
-        throw new NotYetImplementedException();
+        knownIPs.add(ip);
+        save();
     }
     
     @Override
-    public boolean hasSimilarIps(UUID otherUser) {
-        throw new NotYetImplementedException();
-//        return false;
+    public boolean haveSimilarIps(UUID otherUser) {
+        for (String otherIP : plugin.getDatabaseManager().getIpsDatabase().getIPS(otherUser))
+            for (String ip : knownIPs)
+                if (otherIP.equals(ip))
+                    return true;
+        
+        return false;
     }
     
     @Override
     public void purgePunishments() {
-        throw new NotYetImplementedException();
+        String at = TimeUtils.format(System.currentTimeMillis());
+        
+        for (UUID uuid : punishmentIds) {
+            CraftPunishment.loadFromDatabase(uuid).remove(null, "Punishment Purge from " + at);
+        }
     }
     
     @Override
     public void setAdmin(boolean state) {
-        throw new NotYetImplementedException();
+        adminStatus = state;
+        save();
     }
     
     @Override
     public boolean isAdmin() {
-        throw new NotYetImplementedException();
-//        return false;
+        return adminStatus;
     }
     
     @Override
-    public void addPunishment() {
-        throw new NotYetImplementedException();
+    public void addPunishment(Punishment punishment) {
+        punishmentIds.add(punishment.getPunishmentId());
     }
     
     @Override
     public Punishment getCurrentBan() {
-        throw new NotYetImplementedException();
-//        return null;
+        for (UUID uuid : punishmentIds) {
+            Punishment punishment = CraftPunishment.loadFromDatabase(uuid);
+            
+            if (punishment.isActive() && punishment.getType() == PunishmentType.BAN)
+                return punishment;
+        }
+        
+        return null;
     }
     
     @Override
     public Punishment getCurrentMute() {
-        throw new NotYetImplementedException();
-//        return null;
+        for (UUID uuid : punishmentIds) {
+            Punishment punishment = CraftPunishment.loadFromDatabase(uuid);
+            
+            if (punishment.isActive() && punishment.getType() == PunishmentType.MUTE)
+                return punishment;
+        }
+        
+        return null;
     }
     
     @Override
     public UUID[] getAllPunishmentIds() {
-        throw new NotYetImplementedException();
-//        return new UUID[0];
+        return punishmentIds.toArray(new UUID[punishmentIds.size()]);
     }
     
     @Override

@@ -16,7 +16,7 @@ public interface BanmanagerUser extends ProxiedPlayer, DatabaseEntry {
     
     void addIp(String ip);
     
-    boolean hasSimilarIps(UUID otherUser);
+    boolean haveSimilarIps(UUID otherUser);
     
     void purgePunishments();
     
@@ -24,7 +24,7 @@ public interface BanmanagerUser extends ProxiedPlayer, DatabaseEntry {
     
     boolean isAdmin();
     
-    void addPunishment();
+    void addPunishment(Punishment punishment);
     
     Punishment getCurrentBan();
     

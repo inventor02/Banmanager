@@ -58,6 +58,10 @@ public class DatabaseManager {
         return userDatabase;
     }
     
+    public IPSDatabase getIpsDatabase() {
+        return ipsDatabase;
+    }
+    
     public UUIDMapDatabase getUuidMapDatabase() {
         return uuidMapDatabase;
     }

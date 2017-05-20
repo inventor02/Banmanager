@@ -6,7 +6,6 @@ import me.shawlaf.banmanager.managers.database.UserDatabase;
 import me.shawlaf.banmanager.managers.database.util.DatabaseDelete;
 import me.shawlaf.banmanager.managers.database.util.DatabaseInsert;
 import me.shawlaf.banmanager.managers.database.util.DatabaseQuery;
-import me.shawlaf.banmanager.util.JSONUtils;
 import net.md_5.bungee.api.ProxyServer;
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -87,8 +86,12 @@ public class MysqlUserDatabase extends AbstractUpdatedSqlTable implements UserDa
         object.put("name", set.getString("name"));
         object.put("uuid", set.getString("uuid"));
         object.put("admin", set.getBoolean("admin"));
-        object.put("mail", JSONUtils.toJSONArray(Arrays.asList((Object[]) set.getArray("mail").getArray())));
         
+        try {
+            object.put("mail", new JSONArray(set.getString("mail")));
+        } catch (Exception e) {
+            object.put("mail", new JSONArray());
+        }
         return object;
     }
     

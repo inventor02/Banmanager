@@ -3,6 +3,7 @@ package me.shawlaf.banmanager.managers.database;
 import me.shawlaf.banmanager.punish.Punishment;
 import org.json.JSONObject;
 
+import java.util.Set;
 import java.util.UUID;
 
 /**
@@ -25,4 +26,6 @@ public interface PunishmentDatabase {
     default void putPunishment(Punishment punishment) {
         putPunishment(punishment.getPunishmentId(), punishment.toJSONObject());
     }
+    
+    Set<UUID> getAllPunishmentsIds(UUID offender);
 }

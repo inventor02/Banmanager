@@ -1,6 +1,7 @@
 package me.shawlaf.banmanager.implementation.punish;
 
 import me.shawlaf.banmanager.Banmanager;
+import me.shawlaf.banmanager.indev.NotYetImplementedException;
 import me.shawlaf.banmanager.punish.Punishment;
 import me.shawlaf.banmanager.punish.PunishmentType;
 import me.shawlaf.banmanager.users.BanmanagerUser;
@@ -20,6 +21,14 @@ public class CraftPunishment implements Punishment {
     private UUID offenderUUID, moderatorUUID, removedByUUID, removeWhenModerator, punishmentId;
     private String moderatorIP, reason, removeReason, removeWhenReason;
     private long dateExpire, dateRemoved, removeWhenDate, dateCreated;
+    
+    public static CraftPunishment createNew(UUID offenderUUID, UUID moderatorUUID, String moderatorIP, String reason, long lenght) {
+        throw new NotYetImplementedException();
+    }
+    
+    public static CraftPunishment loadFromDatabase(UUID punishmentId) {
+        throw new NotYetImplementedException();
+    }
     
     @Override
     public Map<String, Object> map() {
@@ -171,6 +180,10 @@ public class CraftPunishment implements Punishment {
     
     @Override
     public void remove(UUID removedBy, String reason, long when) {
+        
+        if (wasRemoved()) // Prevent punishment to be removed twice via punishment purge in CraftBanmanagerUser#purgePunishments
+            return;
+        
         this.removedByUUID = removedBy;
         this.removeReason = reason;
         this.dateRemoved = when;
