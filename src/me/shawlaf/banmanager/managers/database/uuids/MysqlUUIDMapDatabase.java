@@ -58,7 +58,7 @@ public class MysqlUUIDMapDatabase extends AbstractSqlTable implements UUIDMapDat
             return nameToUUIDCache.get(name.toLowerCase());
         else {
             try {
-                ResultSet set = DatabaseQuery.create().checkColumns("name").checkValues(name.toLowerCase()).selectColumns("uuid").executeQuery(this);
+                ResultSet set = DatabaseQuery.create().checkColumns("name").checkValues(name.toLowerCase()).selectColumns("uuid").execute(this);
                 
                 if (set.next()) {
                     UUID uuid = UUID.fromString(set.getString("uuid"));
@@ -80,7 +80,7 @@ public class MysqlUUIDMapDatabase extends AbstractSqlTable implements UUIDMapDat
             return uuidToNameCache.get(uuid);
         else {
             try {
-                ResultSet set = DatabaseQuery.create().checkColumns("uuid").checkValues(uuid.toString()).selectColumns("name").executeQuery(this);
+                ResultSet set = DatabaseQuery.create().checkColumns("uuid").checkValues(uuid.toString()).selectColumns("name").execute(this);
                 
                 if (set.next()) {
                     String name = set.getString("name");

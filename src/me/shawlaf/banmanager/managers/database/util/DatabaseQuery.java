@@ -2,6 +2,7 @@ package me.shawlaf.banmanager.managers.database.util;
 
 import me.shawlaf.banmanager.managers.database.AbstractSqlTable;
 
+import javax.xml.transform.Result;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -12,7 +13,7 @@ import java.util.List;
 /**
  * Created by Florian on 31.12.2016.
  */
-public class DatabaseQuery {
+public class DatabaseQuery implements DatabaseExecuteable<ResultSet> {
     
     public static final String SELECT_ALL = "*";
     
@@ -60,7 +61,7 @@ public class DatabaseQuery {
         return sqlBuilder.toString();
     }
     
-    public ResultSet executeQuery(AbstractSqlTable table) throws SQLException {
+    public ResultSet execute(AbstractSqlTable table) throws SQLException {
         PreparedStatement statement = table.connection().prepareStatement(generateSql(table.table));
         
         if (checkObjects != null && checkObjects.size() > 0) {
@@ -73,7 +74,7 @@ public class DatabaseQuery {
         return statement.executeQuery();
     }
     
-    public ResultSet executeQuery(Connection connection, String table) throws SQLException {
+    public ResultSet execute(Connection connection, String table) throws SQLException {
         PreparedStatement statement = connection.prepareStatement(generateSql(table));
         
         if (checkObjects != null && checkObjects.size() > 0) {

@@ -2,7 +2,9 @@ package me.shawlaf.banmanager.managers.database.util;
 
 import me.shawlaf.banmanager.managers.database.AbstractSqlTable;
 
+import java.sql.Connection;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Map;
@@ -11,7 +13,7 @@ import java.util.Set;
 /**
  * Created by Florian on 30.12.2016.
  */
-public class DatabaseInsert {
+public class DatabaseInsert implements DatabaseExecuteable<Integer> {
     
     private Map<Integer, Object> map;
     private int index;
@@ -49,15 +51,16 @@ public class DatabaseInsert {
         return map.entrySet();
     }
     
-    public void execute(AbstractSqlTable table) throws SQLException {
-        String sql = "INSERT INTO " + table.table + " VALUES (" + generateQuestionMarks(size()) + ");";
+    @Override
+    public Integer execute(Connection connection, String table) throws SQLException {
+        String sql = "INSERT INTO " + table + " VALUES (" + generateQuestionMarks(size()) + ");";
         
-        PreparedStatement preparedStatement = table.connection().prepareStatement(sql);
+        PreparedStatement preparedStatement = connection.prepareStatement(sql);
         
         for (Map.Entry<Integer, Object> entry : entrySet())
             preparedStatement.setObject(entry.getKey(), entry.getValue());
         
-        preparedStatement.executeUpdate();
+        return preparedStatement.executeUpdate();
     }
     
     private String generateQuestionMarks(int amount) {

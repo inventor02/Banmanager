@@ -43,7 +43,7 @@ public abstract class AbstractUpdatedSqlTable extends AbstractSqlTable {
                 
                 if (isOldFormat(columns)) {
                     ProxyServer.getInstance().getLogger().info("Converting old " + table + " Table to the new format");
-                    ResultSet entireOldTable = DatabaseQuery.create().selectColumns(DatabaseQuery.SELECT_ALL).executeQuery(connection(), allTables.getString(1));
+                    ResultSet entireOldTable = DatabaseQuery.create().selectColumns(DatabaseQuery.SELECT_ALL).execute(connection(), allTables.getString(1));
                     
                     DatabaseInsert[] insertsToExecute = convertToNew(entireOldTable);
                     

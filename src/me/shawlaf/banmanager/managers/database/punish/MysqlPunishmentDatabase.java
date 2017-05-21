@@ -44,7 +44,7 @@ public class MysqlPunishmentDatabase extends AbstractUpdatedSqlTable implements 
     @Override
     public JSONObject getPunishmentObject(UUID punishmentId) {
         try {
-            ResultSet set = DatabaseQuery.create().checkColumns("id").checkValues(punishmentId.toString()).executeQuery(this);
+            ResultSet set = DatabaseQuery.create().checkColumns("id").checkValues(punishmentId.toString()).execute(this);
             
             JSONObject object = new JSONObject();
             
@@ -146,7 +146,7 @@ public class MysqlPunishmentDatabase extends AbstractUpdatedSqlTable implements 
     @Override
     public boolean doesPunishmentExist(UUID punishmentId) {
         try {
-            return DatabaseQuery.create().checkColumns("id").checkValues(punishmentId.toString()).executeQuery(this).next();
+            return DatabaseQuery.create().checkColumns("id").checkValues(punishmentId.toString()).execute(this).next();
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -156,7 +156,7 @@ public class MysqlPunishmentDatabase extends AbstractUpdatedSqlTable implements 
     
     @Override
     public Set<UUID> getAllPunishmentsIds(UUID offender) {
-        try (ResultSet set = DatabaseQuery.create().checkColumns("offender").checkValues(offender.toString()).selectColumns("id").executeQuery(this)) {
+        try (ResultSet set = DatabaseQuery.create().checkColumns("offender").checkValues(offender.toString()).selectColumns("id").execute(this)) {
             
             Set<UUID> ids = new HashSet<>();
             

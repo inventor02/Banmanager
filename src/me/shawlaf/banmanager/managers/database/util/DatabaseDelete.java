@@ -2,6 +2,7 @@ package me.shawlaf.banmanager.managers.database.util;
 
 import me.shawlaf.banmanager.managers.database.AbstractSqlTable;
 
+import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -11,7 +12,7 @@ import java.util.List;
 /**
  * Created by Florian on 30.12.2016.
  */
-public class DatabaseDelete {
+public class DatabaseDelete implements DatabaseExecuteable<Integer> {
     
     private List<String> parametersToCheck;
     private List<Object> valuesToCheck;
@@ -32,12 +33,12 @@ public class DatabaseDelete {
         return this;
     }
     
-    public String generateSqlString(AbstractSqlTable table) {
+    public String generateSqlString(String table) {
         
         if (valuesToCheck.size() != parametersToCheck.size())
             return null;
         
-        StringBuilder sqlBuilder = new StringBuilder("DELETE FROM " + table.table);
+        StringBuilder sqlBuilder = new StringBuilder("DELETE FROM " + table);
         
         if (parametersToCheck.size() > 0) {
             sqlBuilder.append("WHERE ");
@@ -51,14 +52,15 @@ public class DatabaseDelete {
         return sqlBuilder.toString();
     }
     
-    public void execute(AbstractSqlTable table) throws SQLException {
+    @Override
+    public Integer execute(Connection connection, String table) throws SQLException {
         int index = 1;
-        PreparedStatement preparedStatement = table.connection().prepareStatement(generateSqlString(table));
+        PreparedStatement preparedStatement = connection.prepareStatement(generateSqlString(table));
         
         for (int i = 0; i < parametersToCheck.size(); i++)
             preparedStatement.setObject(index++, valuesToCheck.get(i));
         
-        preparedStatement.executeUpdate();
+        return preparedStatement.executeUpdate();
     }
     
 }

@@ -59,7 +59,7 @@ public class CraftBanmanagerUser implements BanmanagerUser {
     }
     
     private void save() {
-        throw new NotYetImplementedException();
+        plugin.getDatabaseManager().getUserDatabase().updateUser(this);
     }
     
     private Set<String> fetchKnownIps() {

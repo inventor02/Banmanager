@@ -36,7 +36,7 @@ public class MysqlIPSDatabase extends AbstractUpdatedSqlTable implements IPSData
         
         try {
             Set<UUID> set = new HashSet<>();
-            ResultSet resultSet = DatabaseQuery.create().selectColumns("uuid").checkColumns("ip").checkValues(ip).executeQuery(this);
+            ResultSet resultSet = DatabaseQuery.create().selectColumns("uuid").checkColumns("ip").checkValues(ip).execute(this);
             
             while (resultSet.next()) {
                 set.add(UUID.fromString(resultSet.getString("uuid")));
@@ -54,7 +54,7 @@ public class MysqlIPSDatabase extends AbstractUpdatedSqlTable implements IPSData
     public Set<String> getIPS(UUID uuid) {
         try {
             Set<String> set = new HashSet<>();
-            ResultSet resultSet = DatabaseQuery.create().selectColumns("ip").checkColumns("uuid").checkValues(uuid.toString()).executeQuery(this);
+            ResultSet resultSet = DatabaseQuery.create().selectColumns("ip").checkColumns("uuid").checkValues(uuid.toString()).execute(this);
             
             while (resultSet.next()) {
                 set.add(resultSet.getString("ip"));
@@ -70,7 +70,7 @@ public class MysqlIPSDatabase extends AbstractUpdatedSqlTable implements IPSData
     
     @Override
     public boolean has(UUID uuid) throws SQLException {
-        return DatabaseQuery.create().checkColumns("uuid").checkValues(uuid.toString()).selectColumns("ip").executeQuery(this).next();
+        return DatabaseQuery.create().checkColumns("uuid").checkValues(uuid.toString()).selectColumns("ip").execute(this).next();
     }
     
     @Override

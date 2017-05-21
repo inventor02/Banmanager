@@ -6,6 +6,7 @@ import me.shawlaf.banmanager.managers.database.UserDatabase;
 import me.shawlaf.banmanager.managers.database.util.DatabaseDelete;
 import me.shawlaf.banmanager.managers.database.util.DatabaseInsert;
 import me.shawlaf.banmanager.managers.database.util.DatabaseQuery;
+import me.shawlaf.banmanager.managers.database.util.Transaction;
 import net.md_5.bungee.api.ProxyServer;
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -67,7 +68,7 @@ public class MysqlUserDatabase extends AbstractUpdatedSqlTable implements UserDa
             if (cache.containsKey(uuid))
                 return cache.get(uuid);
             
-            ResultSet set = DatabaseQuery.create().selectColumns(DatabaseQuery.SELECT_ALL).checkColumns("uuid").checkValues(uuid.toString()).executeQuery(this);
+            ResultSet set = DatabaseQuery.create().selectColumns(DatabaseQuery.SELECT_ALL).checkColumns("uuid").checkValues(uuid.toString()).execute(this);
             
             if (set.next()) {
                 return cacheUpdate(uuid, constructJSONObject(set));
@@ -106,8 +107,13 @@ public class MysqlUserDatabase extends AbstractUpdatedSqlTable implements UserDa
         cacheUpdate(uuid, object);
         
         try {
-            DatabaseDelete.create().checkColumns("uuid").checkValues(uuid.toString()).execute(this);
-            toInsert(object).execute(this);
+            Transaction.createNew()
+                    .addTask(DatabaseDelete
+                            .create()
+                            .checkColumns("uuid")
+                            .checkValues(uuid.toString()))
+                    .addTask(toInsert(object))
+            .execute(this);
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -119,7 +125,7 @@ public class MysqlUserDatabase extends AbstractUpdatedSqlTable implements UserDa
             return true;
         else {
             try {
-                return DatabaseQuery.create().checkColumns("uuid").checkValues(uuid.toString()).executeQuery(this).next();
+                return DatabaseQuery.create().checkColumns("uuid").checkValues(uuid.toString()).execute(this).next();
             } catch (SQLException e) {
                 e.printStackTrace();
             }
