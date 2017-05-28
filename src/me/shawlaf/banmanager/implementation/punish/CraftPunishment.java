@@ -22,12 +22,33 @@ public class CraftPunishment implements Punishment {
     private String moderatorIP, reason, removeReason, removeWhenReason;
     private long dateExpire, dateRemoved, removeWhenDate, dateCreated;
     
-    public static CraftPunishment createNew(UUID offenderUUID, UUID moderatorUUID, String moderatorIP, String reason, long lenght) {
+    public static CraftPunishment createNew(Banmanager plugin, UUID offenderUUID, PunishmentType type, UUID moderatorUUID, String moderatorIP, String reason, long length) {
+        return new CraftPunishment(plugin, offenderUUID, type, moderatorUUID, moderatorIP, reason, length);
+    }
+    
+    public static CraftPunishment loadFromDatabase(Banmanager plugin, UUID punishmentId) {
         throw new NotYetImplementedException();
     }
     
-    public static CraftPunishment loadFromDatabase(UUID punishmentId) {
-        throw new NotYetImplementedException();
+    private CraftPunishment(Banmanager plugin, UUID offenderUUID, PunishmentType type, UUID moderatorUUID, String moderatorIP, String reason, long length) {
+        this.plugin = plugin;
+        this.type = type;
+        this.offenderUUID = offenderUUID;
+        this.moderatorUUID = moderatorUUID;
+        this.punishmentId = UUID.randomUUID();
+        this.moderatorIP = moderatorIP;
+        this.reason = reason;
+        this.dateCreated = System.currentTimeMillis();
+        
+        if (length != -1 && type.hasLength()) {
+            dateExpire = dateCreated + length;
+        } else if (length == -1 && type.hasLength()) {
+            dateExpire= -1;
+        } else {
+            dateExpire = 0;
+        }
+        
+        save();
     }
     
     @Override
