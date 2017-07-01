@@ -7,32 +7,22 @@ import me.shawlaf.banmanager.managers.database.util.DatabaseDelete;
 import me.shawlaf.banmanager.managers.database.util.DatabaseInsert;
 import me.shawlaf.banmanager.managers.database.util.DatabaseQuery;
 import me.shawlaf.banmanager.managers.database.util.Transaction;
-import net.md_5.bungee.api.ProxyServer;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.*;
-import java.util.concurrent.TimeUnit;
+import java.util.HashSet;
+import java.util.Set;
+import java.util.UUID;
 
 /**
  * Created by Florian on 31.12.2016.
  */
-public class MysqlUserDatabase extends AbstractUpdatedSqlTable implements UserDatabase {
-    
-    private Map<UUID, JSONObject> cache = new HashMap<>();
+public class MysqlUserDatabase extends AbstractUpdatedSqlTable<UUID, JSONObject> implements UserDatabase {
     
     public MysqlUserDatabase(DatabaseManager databaseManager, String table) {
         super(databaseManager, table);
-        
-        int cacheClear = databaseManager.getPlugin().getConfiguration().getMysqlCacheClear();
-        
-        ProxyServer.getInstance().getScheduler().schedule(databaseManager.getPlugin(), this::clearCache, cacheClear, cacheClear, TimeUnit.MINUTES);
-    }
-    
-    private void clearCache() {
-        cache.clear();
     }
     
     @Override
@@ -58,15 +48,15 @@ public class MysqlUserDatabase extends AbstractUpdatedSqlTable implements UserDa
     }
     
     private JSONObject cacheUpdate(UUID uuid, JSONObject object) {
-        cache.put(uuid, object);
+        putCache(uuid, object);
         return object;
     }
     
     @Override
     public JSONObject getUserObject(UUID uuid) {
         try {
-            if (cache.containsKey(uuid))
-                return cache.get(uuid);
+            if (hasCachedValue(uuid))
+                return getCachedValue(uuid);
             
             ResultSet set = DatabaseQuery.create().selectColumns(DatabaseQuery.SELECT_ALL).checkColumns("uuid").checkValues(uuid.toString()).execute(this);
             
@@ -113,7 +103,7 @@ public class MysqlUserDatabase extends AbstractUpdatedSqlTable implements UserDa
                             .checkColumns("uuid")
                             .checkValues(uuid.toString()))
                     .addTask(toInsert(object))
-            .execute(this);
+                    .execute(this);
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -121,14 +111,10 @@ public class MysqlUserDatabase extends AbstractUpdatedSqlTable implements UserDa
     
     @Override
     public boolean has(UUID uuid) {
-        if (cache.containsKey(uuid))
-            return true;
-        else {
-            try {
-                return DatabaseQuery.create().checkColumns("uuid").checkValues(uuid.toString()).execute(this).next();
-            } catch (SQLException e) {
-                e.printStackTrace();
-            }
+        try {
+            return hasCachedValue(uuid) || DatabaseQuery.create().checkColumns("uuid").checkValues(uuid.toString()).execute(this).next();
+        } catch (SQLException e) {
+            e.printStackTrace();
         }
         
         return false;

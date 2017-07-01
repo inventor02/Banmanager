@@ -18,7 +18,7 @@ import java.util.UUID;
 /**
  * Created by Florian on 26.02.2017.
  */
-public class MysqlPunishmentDatabase extends AbstractUpdatedSqlTable implements PunishmentDatabase {
+public class MysqlPunishmentDatabase extends AbstractUpdatedSqlTable<UUID, JSONObject> implements PunishmentDatabase {
     
     public MysqlPunishmentDatabase(DatabaseManager databaseManager, String table) {
         super(databaseManager, table);
@@ -43,8 +43,10 @@ public class MysqlPunishmentDatabase extends AbstractUpdatedSqlTable implements 
     
     @Override
     public JSONObject getPunishmentObject(UUID punishmentId) {
-        try {
-            ResultSet set = DatabaseQuery.create().checkColumns("id").checkValues(punishmentId.toString()).execute(this);
+        if (hasCachedValue(punishmentId))
+            return getCachedValue(punishmentId);
+        
+        try (ResultSet set = DatabaseQuery.create().checkColumns("id").checkValues(punishmentId.toString()).execute(this)) {
             
             JSONObject object = new JSONObject();
             
@@ -88,6 +90,7 @@ public class MysqlPunishmentDatabase extends AbstractUpdatedSqlTable implements 
     public void wipePunishment(UUID punishmentId) {
         try {
             DatabaseDelete.create().checkColumns("id").checkValues(punishmentId.toString()).execute(this);
+            removeCachedValue(punishmentId);
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -138,6 +141,8 @@ public class MysqlPunishmentDatabase extends AbstractUpdatedSqlTable implements 
                         .updateColumns("reason", "offender", "moderator", "dateCreated", "type", "id", "modip", "removeReason", "dateRemoved", "removedBy", "scheduledRemove", "length")
                         .updateValues(values).execute(this);
             }
+            
+            putCache(punishmentId, object);
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -146,7 +151,7 @@ public class MysqlPunishmentDatabase extends AbstractUpdatedSqlTable implements 
     @Override
     public boolean doesPunishmentExist(UUID punishmentId) {
         try {
-            return DatabaseQuery.create().checkColumns("id").checkValues(punishmentId.toString()).execute(this).next();
+            return hasCachedValue(punishmentId) || DatabaseQuery.create().checkColumns("id").checkValues(punishmentId.toString()).execute(this).next();
         } catch (SQLException e) {
             e.printStackTrace();
         }

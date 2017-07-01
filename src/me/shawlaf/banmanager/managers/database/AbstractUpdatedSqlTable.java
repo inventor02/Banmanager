@@ -11,7 +11,7 @@ import java.sql.SQLException;
 /**
  * Created by Florian on 31.12.2016.
  */
-public abstract class AbstractUpdatedSqlTable extends AbstractSqlTable {
+public abstract class AbstractUpdatedSqlTable<K, V> extends AbstractSqlTable<K, V> {
     
     public AbstractUpdatedSqlTable(DatabaseManager databaseManager, String table) {
         super(databaseManager, table);

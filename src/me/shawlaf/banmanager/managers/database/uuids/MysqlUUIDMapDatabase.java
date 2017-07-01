@@ -18,7 +18,7 @@ import java.util.concurrent.TimeUnit;
 /**
  * Created by Florian on 31.12.2016.
  */
-public class MysqlUUIDMapDatabase extends AbstractSqlTable implements UUIDMapDatabase {
+public class MysqlUUIDMapDatabase extends AbstractSqlTable implements UUIDMapDatabase { // This will be cached both ways, using own cache system
     
     private Map<String, UUID> nameToUUIDCache = new HashMap<>();
     private Map<UUID, String> uuidToNameCache = new HashMap<>();

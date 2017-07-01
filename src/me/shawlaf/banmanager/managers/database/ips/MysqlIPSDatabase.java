@@ -16,7 +16,7 @@ import java.util.UUID;
 /**
  * Created by Florian on 26.03.2017.
  */
-public class MysqlIPSDatabase extends AbstractUpdatedSqlTable implements IPSDatabase {
+public class MysqlIPSDatabase extends AbstractUpdatedSqlTable<UUID, Set<String>> implements IPSDatabase {
     
     public MysqlIPSDatabase(DatabaseManager databaseManager, String table) {
         super(databaseManager, table);
@@ -26,6 +26,17 @@ public class MysqlIPSDatabase extends AbstractUpdatedSqlTable implements IPSData
     public void putIP(UUID uuid, String ip) {
         try {
             DatabaseInsert.create().put(uuid.toString(), ip).execute(this);
+            
+            
+            if (!hasCachedValue(uuid)) {
+                putCache(uuid, getIPS(uuid));
+            } else {
+                Set<String> cachedIPS = getCachedValue(uuid);
+                cachedIPS.add(ip);
+                
+                putCache(uuid, cachedIPS);
+            }
+            
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -35,6 +46,7 @@ public class MysqlIPSDatabase extends AbstractUpdatedSqlTable implements IPSData
     public Set<UUID> getUsersWithIP(String ip) {
         
         try {
+            
             Set<UUID> set = new HashSet<>();
             ResultSet resultSet = DatabaseQuery.create().selectColumns("uuid").checkColumns("ip").checkValues(ip).execute(this);
             
@@ -53,6 +65,10 @@ public class MysqlIPSDatabase extends AbstractUpdatedSqlTable implements IPSData
     @Override
     public Set<String> getIPS(UUID uuid) {
         try {
+            
+            if (hasCachedValue(uuid))
+                return getCachedValue(uuid);
+            
             Set<String> set = new HashSet<>();
             ResultSet resultSet = DatabaseQuery.create().selectColumns("ip").checkColumns("uuid").checkValues(uuid.toString()).execute(this);
             
@@ -70,7 +86,7 @@ public class MysqlIPSDatabase extends AbstractUpdatedSqlTable implements IPSData
     
     @Override
     public boolean has(UUID uuid) throws SQLException {
-        return DatabaseQuery.create().checkColumns("uuid").checkValues(uuid.toString()).selectColumns("ip").execute(this).next();
+        return hasCachedValue(uuid) || DatabaseQuery.create().checkColumns("uuid").checkValues(uuid.toString()).selectColumns("ip").execute(this).next();
     }
     
     @Override
