@@ -1,11 +1,8 @@
 package me.shawlaf.banmanager.managers.database.util;
 
-import me.shawlaf.banmanager.managers.database.AbstractSqlTable;
-
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -14,7 +11,7 @@ import java.util.List;
  */
 public class DatabaseDelete implements DatabaseExecuteable<Integer> {
     
-    private List<String> parametersToCheck;
+    private List<String> columnsToCheck;
     private List<Object> valuesToCheck;
     
     public static DatabaseDelete create() {
@@ -29,22 +26,22 @@ public class DatabaseDelete implements DatabaseExecuteable<Integer> {
     }
     
     public DatabaseDelete checkColumns(String... columns) {
-        parametersToCheck = Arrays.asList(columns);
+        columnsToCheck = Arrays.asList(columns);
         return this;
     }
     
     public String generateSqlString(String table) {
         
-        if (valuesToCheck.size() != parametersToCheck.size())
+        if (valuesToCheck.size() != columnsToCheck.size())
             return null;
         
         StringBuilder sqlBuilder = new StringBuilder("DELETE FROM " + table);
         
-        if (parametersToCheck.size() > 0) {
-            sqlBuilder.append("WHERE ");
+        if (columnsToCheck.size() > 0) {
+            sqlBuilder.append(" WHERE ");
             
-            for (int i = 0; i < parametersToCheck.size(); ++ i)
-                sqlBuilder.append(parametersToCheck.get(i) + " = ?" + (i == parametersToCheck.size() - 1 ? "" : " AND "));
+            for (int i = 0; i < columnsToCheck.size(); ++ i)
+                sqlBuilder.append(columnsToCheck.get(i) + " = ?" + (i == columnsToCheck.size() - 1 ? "" : " AND "));
         }
         
         sqlBuilder.append(";");
@@ -57,9 +54,11 @@ public class DatabaseDelete implements DatabaseExecuteable<Integer> {
         int index = 1;
         PreparedStatement preparedStatement = connection.prepareStatement(generateSqlString(table));
         
-        for (int i = 0; i < parametersToCheck.size(); i++)
+        for (int i = 0; i < columnsToCheck.size(); i++) {
             preparedStatement.setObject(index++, valuesToCheck.get(i));
+        }
         
+        System.out.println(preparedStatement);
         return preparedStatement.executeUpdate();
     }
     

@@ -1,10 +1,7 @@
 package me.shawlaf.banmanager.managers.database.util;
 
-import me.shawlaf.banmanager.managers.database.AbstractSqlTable;
-
 import java.sql.Connection;
 import java.sql.PreparedStatement;
-import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Map;
@@ -56,10 +53,15 @@ public class DatabaseInsert implements DatabaseExecuteable<Integer> {
         String sql = "INSERT INTO " + table + " VALUES (" + generateQuestionMarks(size()) + ");";
         
         PreparedStatement preparedStatement = connection.prepareStatement(sql);
+        int index = 1;
         
-        for (Map.Entry<Integer, Object> entry : entrySet())
+        preparedStatement.setString(index++, table);
+        
+        for (Map.Entry<Integer, Object> entry : entrySet()) {
             preparedStatement.setObject(entry.getKey(), entry.getValue());
+        }
         
+        System.out.println(preparedStatement);
         return preparedStatement.executeUpdate();
     }
     

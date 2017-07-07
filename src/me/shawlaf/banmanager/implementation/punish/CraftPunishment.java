@@ -1,11 +1,11 @@
 package me.shawlaf.banmanager.implementation.punish;
 
 import me.shawlaf.banmanager.Banmanager;
-import me.shawlaf.banmanager.indev.NotYetImplementedException;
 import me.shawlaf.banmanager.punish.Punishment;
 import me.shawlaf.banmanager.punish.PunishmentType;
 import me.shawlaf.banmanager.users.BanmanagerUser;
 import net.md_5.bungee.api.ProxyServer;
+import org.json.JSONObject;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -27,7 +27,64 @@ public class CraftPunishment implements Punishment {
     }
     
     public static CraftPunishment loadFromDatabase(Banmanager plugin, UUID punishmentId) {
-        throw new NotYetImplementedException();
+        JSONObject object = plugin.getDatabaseManager().getPunishmentDatabase().getPunishmentObject(punishmentId);
+        
+        return new CraftPunishment(
+                plugin,
+                PunishmentType.values()[object.getInt("type")],
+                
+                object.getUUID("offender"),
+                object.getUUID("moderator"),
+                object.optUUID("removedBy"),
+                object.optJSONObjectNotNull("removeWhen").optUUID("removedBy"),
+                punishmentId,
+                
+                object.getString("modip"),
+                object.getString("reason"),
+                object.optString("removeReason"),
+                object.optJSONObjectNotNull("removeWhen").optString("removeReason"),
+                
+                object.getLong("length") == - 1L ? - 1L : object.getLong("dateCreated") + object.getLong("length"),
+                object.optLong("dateRemoved"),
+                object.optJSONObjectNotNull("removeWhen").optLong("dateRemoved"),
+                object.getLong("dateCreated")
+        );
+    }
+    
+    private CraftPunishment(
+            Banmanager plugin,
+            PunishmentType type,
+            
+            UUID offenderUUID,
+            UUID moderatorUUID,
+            UUID removedByUUID,
+            UUID removeWhenModerator,
+            UUID punishmentId,
+            
+            String moderatorIP,
+            String reason,
+            String removeReason,
+            String removeWhenReason,
+            
+            long dateExpire,
+            long dateRemoved,
+            long removeWhenDate,
+            long dateCreated) {
+        this.plugin = plugin;
+        this.type = type;
+        this.offenderUUID = offenderUUID;
+        this.moderatorUUID = moderatorUUID;
+        this.removedByUUID = removedByUUID;
+        this.removeWhenModerator = removeWhenModerator;
+        this.punishmentId = punishmentId;
+        this.moderatorIP = moderatorIP;
+        this.reason = reason;
+        this.removeReason = removeReason;
+        this.removeWhenReason = removeWhenReason;
+        this.dateExpire = dateExpire;
+        this.dateRemoved = dateRemoved;
+        this.removeWhenDate = removeWhenDate;
+        this.dateCreated = dateCreated;
     }
     
     private CraftPunishment(Banmanager plugin, UUID offenderUUID, PunishmentType type, UUID moderatorUUID, String moderatorIP, String reason, long length) {
@@ -40,10 +97,10 @@ public class CraftPunishment implements Punishment {
         this.reason = reason;
         this.dateCreated = System.currentTimeMillis();
         
-        if (length != -1 && type.hasLength()) {
+        if (length != - 1 && type.hasLength()) {
             dateExpire = dateCreated + length;
-        } else if (length == -1 && type.hasLength()) {
-            dateExpire= -1;
+        } else if (length == - 1 && type.hasLength()) {
+            dateExpire = - 1;
         } else {
             dateExpire = 0;
         }

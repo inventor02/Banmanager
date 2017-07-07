@@ -129,7 +129,7 @@ public class CraftBanmanagerUser implements BanmanagerUser {
         String at = TimeUtils.format(System.currentTimeMillis());
         
         for (UUID uuid : punishmentIds) {
-            CraftPunishment.loadFromDatabase(uuid).remove(null, "Punishment Purge from " + at);
+            CraftPunishment.loadFromDatabase(plugin, uuid).remove(null, "Punishment Purge from " + at);
         }
     }
     
@@ -152,7 +152,7 @@ public class CraftBanmanagerUser implements BanmanagerUser {
     @Override
     public Punishment getCurrentBan() {
         for (UUID uuid : punishmentIds) {
-            Punishment punishment = CraftPunishment.loadFromDatabase(uuid);
+            Punishment punishment = CraftPunishment.loadFromDatabase(plugin, uuid);
             
             if (punishment.isActive() && punishment.getType() == PunishmentType.BAN)
                 return punishment;
@@ -164,7 +164,7 @@ public class CraftBanmanagerUser implements BanmanagerUser {
     @Override
     public Punishment getCurrentMute() {
         for (UUID uuid : punishmentIds) {
-            Punishment punishment = CraftPunishment.loadFromDatabase(uuid);
+            Punishment punishment = CraftPunishment.loadFromDatabase(plugin, uuid);
             
             if (punishment.isActive() && punishment.getType() == PunishmentType.MUTE)
                 return punishment;

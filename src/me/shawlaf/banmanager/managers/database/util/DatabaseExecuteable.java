@@ -15,5 +15,4 @@ public interface DatabaseExecuteable<T> {
     }
     
     T execute(Connection connection, String table) throws SQLException;
-    
 }

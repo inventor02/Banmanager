@@ -2,7 +2,6 @@ package me.shawlaf.banmanager.managers.database.util;
 
 import me.shawlaf.banmanager.managers.database.AbstractSqlTable;
 
-import javax.xml.transform.Result;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -52,8 +51,10 @@ public class DatabaseQuery implements DatabaseExecuteable<ResultSet> {
         sqlBuilder.append("FROM " + table);
         
         if (columnsToCheck != null && columnsToCheck.size() > 0) {
+            sqlBuilder.append(" WHERE ");
+            
             for (int i = 0; i < columnsToCheck.size(); ++ i)
-                sqlBuilder.append(columnsToCheck.get(i) + (i == columnsToCheck.size() - 1 ? " = ?" : " = ?, "));
+                sqlBuilder.append(columnsToCheck.get(i) + (i == columnsToCheck.size() - 1 ? " = ?" : " = ? AND "));
             
         }
         
@@ -62,28 +63,21 @@ public class DatabaseQuery implements DatabaseExecuteable<ResultSet> {
     }
     
     public ResultSet execute(AbstractSqlTable table) throws SQLException {
-        PreparedStatement statement = table.connection().prepareStatement(generateSql(table.table));
-        
-        if (checkObjects != null && checkObjects.size() > 0) {
-            int count = 1;
-            
-            for (Object checkValue : checkObjects)
-                statement.setObject(count++, checkValue);
-        }
-        
-        return statement.executeQuery();
+        return execute(table.connection(), table.table);
     }
     
     public ResultSet execute(Connection connection, String table) throws SQLException {
         PreparedStatement statement = connection.prepareStatement(generateSql(table));
         
-        if (checkObjects != null && checkObjects.size() > 0) {
-            int count = 1;
-            
-            for (Object checkValue : checkObjects)
-                statement.setObject(count++, checkValue);
+        int index = 1;
+        
+        if (checkObjects != null && ! checkObjects.isEmpty()) {
+            for (int i = 0; i < columnsToCheck.size(); i++) {
+                statement.setObject(index++, checkObjects.get(i));
+            }
         }
         
+        System.out.println(statement);
         return statement.executeQuery();
     }
     

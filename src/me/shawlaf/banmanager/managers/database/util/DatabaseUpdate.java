@@ -1,7 +1,5 @@
 package me.shawlaf.banmanager.managers.database.util;
 
-import me.shawlaf.banmanager.managers.database.AbstractSqlTable;
-
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
@@ -14,7 +12,7 @@ import java.util.List;
  */
 public class DatabaseUpdate implements DatabaseExecuteable<Integer> {
     
-    private List<String> parametersToUpdate, parametersToCheck;
+    private List<String> columnsToUpdate, columnsToCheck;
     private List<Object> valuesToUpdate, valuesToCheck;
     
     public static DatabaseUpdate create() {
@@ -22,8 +20,8 @@ public class DatabaseUpdate implements DatabaseExecuteable<Integer> {
     }
     
     private DatabaseUpdate() {
-        this.parametersToCheck = new ArrayList<>();
-        this.parametersToUpdate = new ArrayList<>();
+        this.columnsToCheck = new ArrayList<>();
+        this.columnsToUpdate = new ArrayList<>();
         this.valuesToUpdate = new ArrayList<>();
         this.valuesToCheck = new ArrayList<>();
     }
@@ -39,30 +37,30 @@ public class DatabaseUpdate implements DatabaseExecuteable<Integer> {
     }
     
     public DatabaseUpdate checkColumns(String... parameters) {
-        parametersToCheck.addAll(Arrays.asList(parameters));
+        columnsToCheck.addAll(Arrays.asList(parameters));
         return this;
     }
     
     public DatabaseUpdate updateColumns(String... parameters) {
-        parametersToUpdate.addAll(Arrays.asList(parameters));
+        columnsToUpdate.addAll(Arrays.asList(parameters));
         return this;
     }
     
     public String generateSqlString(String table) {
         
-        if (valuesToUpdate.size() != parametersToUpdate.size() || valuesToCheck.size() != parametersToCheck.size())
+        if (valuesToUpdate.size() != columnsToUpdate.size() || valuesToCheck.size() != columnsToCheck.size())
             return null;
         
         StringBuilder sqlBuilder = new StringBuilder("UPDATE " + table + " SET ");
         
-        for (int i = 0; i < parametersToUpdate.size(); ++ i)
-            sqlBuilder.append(parametersToUpdate.get(i) + " = ?" + (i == parametersToUpdate.size() - 1 ? " " : ", "));
+        for (int i = 0; i < columnsToUpdate.size(); ++ i)
+            sqlBuilder.append(columnsToUpdate.get(i) + " = ?" + (i == columnsToUpdate.size() - 1 ? " " : ", "));
         
-        if (parametersToCheck.size() > 0) {
+        if (columnsToCheck.size() > 0) {
             sqlBuilder.append("WHERE ");
             
-            for (int i = 0; i < parametersToCheck.size(); ++ i)
-                sqlBuilder.append(parametersToCheck.get(i) + " = ?" + (i == parametersToCheck.size() - 1 ? "" : " AND "));
+            for (int i = 0; i < columnsToCheck.size(); ++ i)
+                sqlBuilder.append(columnsToCheck.get(i) + " = ?" + (i == columnsToCheck.size() - 1 ? "" : " AND "));
         }
         
         sqlBuilder.append(";");
@@ -74,12 +72,15 @@ public class DatabaseUpdate implements DatabaseExecuteable<Integer> {
         int index = 1;
         PreparedStatement preparedStatement = connection.prepareStatement(generateSqlString(table));
         
-        for (int i = 0; i < parametersToUpdate.size(); i++)
+        for (int i = 0; i < columnsToUpdate.size(); i++) {
             preparedStatement.setObject(index++, valuesToUpdate.get(i));
+        }
         
-        for (int i = 0; i < parametersToCheck.size(); i++)
+        for (int i = 0; i < columnsToCheck.size(); i++) {
             preparedStatement.setObject(index++, valuesToCheck.get(i));
+        }
         
+        System.out.println(preparedStatement);
         return preparedStatement.executeUpdate();
     }
     
