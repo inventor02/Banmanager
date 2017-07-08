@@ -6,7 +6,6 @@ import me.shawlaf.banmanager.gui.ItemStackBuilder;
 import me.shawlaf.banmanager.gui.UserInterface;
 import me.shawlaf.banmanager.permissions.Task;
 import me.shawlaf.banmanager.punish.PunishmentBuilder;
-import me.shawlaf.banmanager.punish.PunishmentType;
 import me.shawlaf.banmanager.users.OfflineBanmanagerUser;
 import me.shawlaf.banmanager.util.chat.C;
 import net.md_5.bungee.api.ChatColor;
@@ -96,24 +95,44 @@ public class RootPunishUserInterface extends UserInterface {
         if (offenderProfile != null) {
             Set<UUID> alternateAccounts = offenderProfile.findAlternateAccountIds();
             
-            if (alternateAccounts.size() > 0 && punishmentBuilder.punishmentType != null && !punishmentBuilder.punishmentType.isSoft()) {
+            if (alternateAccounts.size() > 0 && punishmentBuilder.punishmentType != null && ! punishmentBuilder.punishmentType.isSoft()) {
                 ItemStackBuilder alts =
                         ItemStackBuilder.build(Material.SKULL_ITEM, click -> {
                             // TODO open alt view
                         })
-                        .damage(3)
-                        .skullOwner(offenderProfile.getUniqueId())
-                        .displayName(C.RESET + alternateAccounts.size() + " alternate account(s)")
-                        .lore(
-                                "",
-                                C.GRAY + punishmentBuilder.multiPunish.size() + " account(s) selected for multi-punish.",
-                                C.GRAY + "Click to view alternate accounts."
-                        );
+                                .damage(3)
+                                .skullOwner(offenderProfile.getUniqueId())
+                                .displayName(C.RESET + alternateAccounts.size() + " alternate account(s)")
+                                .lore(
+                                        "",
+                                        C.GRAY + punishmentBuilder.multiPunish.size() + " account(s) selected for multi-punish.",
+                                        C.GRAY + "Click to view alternate accounts."
+                                );
                 
                 putItem(alts, 2, 3);
             }
             
+            if (offenderProfile.isAdmin()) {
+                putItem(
+                        ItemStackBuilder
+                                .build(Material.DIAMOND_SWORD)
+                                .displayName(C.GOLD + "This user is exempt from punishment!")
+                                .glow(true),
+                        3, 5
+                );
+            }
         }
+        
+        putCloseButton(2, 4);
+        
+        putItem(
+                ItemStackBuilder
+                        .build(Material.SKULL_ITEM)
+                        .displayName(C.RESET + punishmentBuilder.offender)
+                        .lore(offenderProfile != null ? offenderProfile.getPunishmentLore() : null)
+                        .skullOwner(offenderProfile != null ? offenderProfile.getUniqueId() : null),
+                2, 5
+        );
         
         putItem(COMPASS, 0);
         putItem(tutorial, 8);

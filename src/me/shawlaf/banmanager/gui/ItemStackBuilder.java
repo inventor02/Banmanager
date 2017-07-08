@@ -138,6 +138,9 @@ public class ItemStackBuilder { // TODO MAKE THIS
     }
     
     public ItemStackBuilder lore(String... lore) {
+        if (lore == null)
+            return this;
+        
         itemStack.getItemMeta().setLore(new LinkedList<>(Arrays.asList(lore)));
         return this;
     }
@@ -153,6 +156,9 @@ public class ItemStackBuilder { // TODO MAKE THIS
     }
     
     public ItemStackBuilder skullOwner(UUID uuid) {
+        if (uuid == null)
+            return this;
+        
         ((SkullMeta) itemStack.getItemMeta()).setSkin(uuid);
         return this;
     }
@@ -186,4 +192,8 @@ public class ItemStackBuilder { // TODO MAKE THIS
         return copyItemStack(itemStack, itemStack::click);
     }
     
+    public ItemStackBuilder glow(boolean b) {
+        itemStack.getItemMeta().setGlow(b);
+        return this;
+    }
 }

@@ -106,4 +106,5 @@ public interface OfflineBanmanagerUser extends DatabaseEntry {
         return null;
     }
     
+    String[] getPunishmentLore();
 }
