@@ -2,6 +2,7 @@ package me.shawlaf.banmanager.managers.database;
 
 import me.shawlaf.banmanager.Banmanager;
 import me.shawlaf.banmanager.users.BanmanagerUser;
+import me.shawlaf.banmanager.users.OfflineBanmanagerUser;
 import org.json.JSONObject;
 
 import java.util.UUID;
@@ -15,7 +16,7 @@ public interface UserDatabase {
     
     void updateUser(UUID uuid, JSONObject object);
     
-    default void updateUser(BanmanagerUser user) {
+    default void updateUser(OfflineBanmanagerUser user) {
         updateUser(user.getUniqueId(), user.toJSONObject());
     }
     

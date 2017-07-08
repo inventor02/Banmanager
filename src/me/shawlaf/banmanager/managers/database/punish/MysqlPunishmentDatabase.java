@@ -177,6 +177,16 @@ public class MysqlPunishmentDatabase extends AbstractUpdatedSqlTable<UUID, JSONO
     }
     
     @Override
+    public void purgePunishments(UUID uniqueId) {
+        try {
+            getAllPunishmentsIds(uniqueId).forEach(this::removeCachedValue);
+            DatabaseDelete.create().checkColumns("offender").checkValues(uniqueId.toString()).execute(this);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+    
+    @Override
     protected String tableParams() {
         return "reason varchar(100), " +
                 "offender varchar(36), " +

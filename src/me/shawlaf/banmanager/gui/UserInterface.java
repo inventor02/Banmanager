@@ -4,7 +4,6 @@ import dev.wolveringer.bungeeutil.inventory.Inventory;
 import dev.wolveringer.bungeeutil.item.ItemStack;
 import dev.wolveringer.bungeeutil.player.Player;
 import me.shawlaf.banmanager.Banmanager;
-import net.md_5.bungee.api.plugin.Plugin;
 
 import java.util.function.Consumer;
 import java.util.function.Function;
@@ -29,7 +28,7 @@ public class UserInterface {
         if (title != null && title.length() > 32) {
             throw new IllegalArgumentException("Inventory title length may not exceed the length of 32! (Given:" + title.length() + ")");
         }
-    
+        
         this.plugin = plugin;
         this.updateOnClick = updateOnClick;
         this.title = title;
@@ -40,13 +39,17 @@ public class UserInterface {
     
     
     public final void update() {
-        inventory.clear();
+        clear();
         fill();
-        inventory.updateInventory();
+        updateInventory();
     }
     
     protected void fill() {
         
+    }
+    
+    public void updateInventory() {
+        inventory.updateInventory();
     }
     
     public void clear() {

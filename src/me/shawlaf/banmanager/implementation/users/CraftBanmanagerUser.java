@@ -2,7 +2,6 @@ package me.shawlaf.banmanager.implementation.users;
 
 import me.shawlaf.banmanager.Banmanager;
 import me.shawlaf.banmanager.implementation.punish.CraftPunishment;
-import me.shawlaf.banmanager.indev.NotYetImplementedException;
 import me.shawlaf.banmanager.punish.Punishment;
 import me.shawlaf.banmanager.punish.PunishmentType;
 import me.shawlaf.banmanager.users.BanmanagerUser;
@@ -58,54 +57,12 @@ public class CraftBanmanagerUser implements BanmanagerUser {
         
     }
     
-    private void save() {
-        plugin.getDatabaseManager().getUserDatabase().updateUser(this);
-    }
-    
     private Set<String> fetchKnownIps() {
         return plugin.getDatabaseManager().getIpsDatabase().getIPS(implementation.getUniqueId());
     }
     
     private Set<UUID> fetchPunishmentIds() {
         return plugin.getDatabaseManager().getPunishmentDatabase().getAllPunishmentsIds(implementation.getUniqueId());
-    }
-    
-    @Override
-    public Map<String, Object> map() {
-        Map<String, Object> map = new HashMap<>();
-        
-        map.put("name", implementation.getName());
-        map.put("uuid", implementation.getUniqueId().toString());
-        map.put("admin", adminStatus);
-        map.put("mail", JSONUtils.toJSONArray(mail));
-        
-        return map;
-    }
-    
-    @Override
-    public Map<Integer, Object> sqlInsertMap() {
-        
-        Map<Integer, Object> map = new HashMap<>();
-        
-        map.put(1, implementation.getName());
-        map.put(2, implementation.getUniqueId().toString());
-        map.put(3, adminStatus);
-        map.put(4, JSONUtils.toJSONArray(mail).toString(0));
-        
-        return map;
-    }
-    
-    @Override
-    public Set<UUID> findAlternateAccountIds() {
-        Set<UUID> allWithIP = new HashSet<>();
-        
-        for (String ip : knownIPs) {
-            allWithIP.addAll(plugin.getDatabaseManager().getIpsDatabase().getUsersWithIP(ip));
-        }
-        
-        allWithIP.remove(implementation.getUniqueId());
-        
-        return allWithIP;
     }
     
     @Override
@@ -176,6 +133,11 @@ public class CraftBanmanagerUser implements BanmanagerUser {
     @Override
     public UUID[] getAllPunishmentIds() {
         return punishmentIds.toArray(new UUID[punishmentIds.size()]);
+    }
+    
+    @Override
+    public Set<String> getMail() {
+        return mail;
     }
     
     @Override
@@ -252,6 +214,11 @@ public class CraftBanmanagerUser implements BanmanagerUser {
     @Override
     public UUID getUniqueId() {
         return implementation.getUniqueId();
+    }
+    
+    @Override
+    public Banmanager getPlugin() {
+        return null;
     }
     
     @Override

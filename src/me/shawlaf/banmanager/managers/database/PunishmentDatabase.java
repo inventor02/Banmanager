@@ -28,4 +28,6 @@ public interface PunishmentDatabase {
     }
     
     Set<UUID> getAllPunishmentsIds(UUID offender);
+    
+    void purgePunishments(UUID uniqueId);
 }

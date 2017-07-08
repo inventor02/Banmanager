@@ -18,9 +18,19 @@ import java.util.stream.Stream;
 public class ItemStackBuilder { // TODO MAKE THIS
     
     private ItemStack itemStack;
-    private Consumer<ItemStack.Click> clickHandler;
+    private Consumer<ItemStack.Click> clickHandler = c -> {};
     
-    private ItemStackBuilder(Material material, Consumer<ItemStack.Click> clickHandler) {}
+    private ItemStackBuilder(Material material, Consumer<ItemStack.Click> clickHandler) {
+        this.clickHandler = clickHandler;
+        
+        this.itemStack = new ItemStack(material) {
+            @Override
+            public void click(Click click) {
+                clickHandler.accept(click);
+            }
+        };
+        
+    }
     
     private ItemStackBuilder(ItemStack stack) {
         this.itemStack = stack;

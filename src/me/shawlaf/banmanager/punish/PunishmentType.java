@@ -15,6 +15,10 @@ public enum PunishmentType {
         this.guiMaterial = material;
     }
     
+    public boolean isSoft() {
+        return ! hasLength();
+    }
+    
     public boolean hasLength() {
         return this == BAN || this == MUTE;
     }

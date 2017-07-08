@@ -1,7 +1,6 @@
 package me.shawlaf.banmanager;
 
 import dev.wolveringer.bungeeutil.AsyncCatcher;
-import dev.wolveringer.bungeeutil.player.Player;
 import me.shawlaf.banmanager.async.Multithreading;
 import me.shawlaf.banmanager.implementation.users.CraftBanmanagerUser;
 import me.shawlaf.banmanager.managers.ErrorManager;
@@ -9,16 +8,19 @@ import me.shawlaf.banmanager.managers.config.BanManagerConfiguration;
 import me.shawlaf.banmanager.managers.config.ConfigurationManager;
 import me.shawlaf.banmanager.managers.database.DatabaseManager;
 import me.shawlaf.banmanager.permissions.Task;
+import me.shawlaf.banmanager.punish.Punishment;
 import me.shawlaf.banmanager.users.BanmanagerUser;
+import me.shawlaf.banmanager.users.OfflineBanmanagerUser;
+import me.shawlaf.banmanager.util.JSONUtils;
 import me.shawlaf.banmanager.util.chat.C;
 import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.md_5.bungee.api.plugin.Plugin;
+import org.json.JSONObject;
 
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.TimeUnit;
-import java.util.function.Supplier;
+import java.util.function.BooleanSupplier;
 import java.util.logging.Handler;
 
 /**
@@ -26,10 +28,10 @@ import java.util.logging.Handler;
  */
 public class Banmanager extends Plugin {
     
-    private static final Set<BanmanagerUser> online = new HashSet<>();
-    private static Supplier<Banmanager> getPlugin = () -> null;
+    private final Set<BanmanagerUser> online = new HashSet<>();
+    private final Map<UUID, OfflineBanmanagerUser> offlineUserCache = new HashMap<>();
     
-    public static BanmanagerUser getUser(ProxiedPlayer player) {
+    public BanmanagerUser getUser(ProxiedPlayer player) {
         
         if (player == null)
             return null;
@@ -38,7 +40,82 @@ public class Banmanager extends Plugin {
             if (user.getUniqueId() == player.getUniqueId())
                 return user;
         
-        return new CraftBanmanagerUser(player, getPlugin.get());
+        return new CraftBanmanagerUser(player, this);
+    }
+    
+    public OfflineBanmanagerUser getOfflineUser(String name) {
+        return getOfflineUser(databaseManager.getUuidMapDatabase().getUUID(name));
+    }
+    
+    public OfflineBanmanagerUser getOfflineUser(UUID uuid) {
+        if (offlineUserCache.containsKey(uuid))
+            return offlineUserCache.get(uuid);
+        
+        return create(uuid, databaseManager.getUserDatabase().getUserObject(uuid));
+    }
+    
+    private OfflineBanmanagerUser create(UUID uuid, JSONObject userObject) {
+        
+        String name = databaseManager.getUuidMapDatabase().getName(uuid);
+        
+        Set<String> ips = databaseManager.getIpsDatabase().getIPS(uuid), mail;
+        Set<UUID> punishments = databaseManager.getPunishmentDatabase().getAllPunishmentsIds(uuid);
+        BooleanSupplier admin = () -> userObject.optBoolean("admin");
+        
+        mail = new HashSet<>();
+        JSONUtils.toCollection(userObject.optJSONArrayNotNull("mail")).stream().map(Object::toString).forEach(mail::add);
+        
+        OfflineBanmanagerUser create = new OfflineBanmanagerUser() {
+            @Override
+            public void addIp(String ip) {
+                ips.add(ip);
+                save();
+            }
+            
+            @Override
+            public void setAdmin(boolean state) {
+                userObject.put("admin", state);
+                save();
+            }
+            
+            @Override
+            public boolean isAdmin() {
+                return admin.getAsBoolean();
+            }
+            
+            @Override
+            public void addPunishment(Punishment punishment) {
+                punishments.add(punishment.getPunishmentId());
+            }
+            
+            @Override
+            public UUID[] getAllPunishmentIds() {
+                return punishments.toArray(new UUID[punishments.size()]);
+            }
+            
+            @Override
+            public Set<String> getMail() {
+                return mail;
+            }
+            
+            @Override
+            public String getName() {
+                return name;
+            }
+            
+            @Override
+            public UUID getUniqueId() {
+                return uuid;
+            }
+            
+            @Override
+            public Banmanager getPlugin() {
+                return Banmanager.this;
+            }
+        };
+        
+        offlineUserCache.put(uuid, create);
+        return create;
     }
     
     private boolean successfulStartup = false;
@@ -49,9 +126,6 @@ public class Banmanager extends Plugin {
     
     @Override
     public void onLoad() {
-        
-        getPlugin = () -> this;
-        
         Multithreading.initialize(this);
         
         if (! ensureBungeeUtil()) {
@@ -80,12 +154,15 @@ public class Banmanager extends Plugin {
         this.errorManager = new ErrorManager(this);
         this.databaseManager = new DatabaseManager(this);
         
+        ProxyServer.getInstance().getScheduler().schedule(
+                this,
+                offlineUserCache::clear,
+                configurationManager.getConfiguration().getMysqlCacheClear(),
+                configurationManager.getConfiguration().getMysqlCacheClear(),
+                TimeUnit.MINUTES
+        );
+        
         successfulStartup = true;
-    }
-    
-    @Override
-    public void onDisable() {
-        getPlugin = () -> null;
     }
     
     private boolean ensureBungeeUtil() {
@@ -123,4 +200,5 @@ public class Banmanager extends Plugin {
     public boolean hasPermission(ProxiedPlayer player, Task permission) {
         return player.hasPermission(permission.getPermissionNode());
     }
+    
 }

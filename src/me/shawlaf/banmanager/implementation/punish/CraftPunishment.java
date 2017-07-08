@@ -1,6 +1,7 @@
 package me.shawlaf.banmanager.implementation.punish;
 
 import me.shawlaf.banmanager.Banmanager;
+import me.shawlaf.banmanager.managers.database.util.DatabaseInsert;
 import me.shawlaf.banmanager.punish.Punishment;
 import me.shawlaf.banmanager.punish.PunishmentType;
 import me.shawlaf.banmanager.users.BanmanagerUser;
@@ -146,8 +147,8 @@ public class CraftPunishment implements Punishment {
     }
     
     @Override
-    public Map<Integer, Object> sqlInsertMap() {
-        return null; // Not used
+    public DatabaseInsert sqlInsert() {
+        return null;
     }
     
     @Override
@@ -300,7 +301,7 @@ public class CraftPunishment implements Punishment {
             removeReason = null;
             dateRemoved = 0;
             
-            BanmanagerUser player = Banmanager.getUser(ProxyServer.getInstance().getPlayer(getOffenderUUID()));
+            BanmanagerUser player = plugin.getUser(ProxyServer.getInstance().getPlayer(getOffenderUUID()));
             
             if (player != null && type == PunishmentType.BAN) {
                 player.disconnect(generateLoginMessage());

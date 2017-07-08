@@ -1,5 +1,6 @@
 package me.shawlaf.banmanager.managers.database;
 
+import me.shawlaf.banmanager.managers.database.util.DatabaseInsert;
 import me.shawlaf.banmanager.util.JSONUtils;
 import org.json.JSONObject;
 
@@ -16,6 +17,6 @@ public interface DatabaseEntry {
         return JSONUtils.toJSONObject(map());
     }
     
-    Map<Integer, Object> sqlInsertMap();
+    DatabaseInsert sqlInsert();
     
 }
