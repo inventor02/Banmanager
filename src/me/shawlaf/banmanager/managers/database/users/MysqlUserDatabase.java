@@ -110,6 +110,15 @@ public class MysqlUserDatabase extends AbstractUpdatedSqlTable<UUID, JSONObject>
     }
     
     @Override
+    public void createUser(String name, UUID uuid) {
+        try {
+            DatabaseInsert.create().put(name, uuid.toString(), false, "[]").execute(this);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+    
+    @Override
     public boolean has(UUID uuid) {
         try {
             return hasCachedValue(uuid) || DatabaseQuery.create().checkColumns("uuid").checkValues(uuid.toString()).execute(this).next();

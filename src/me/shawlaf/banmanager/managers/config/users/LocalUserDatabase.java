@@ -2,6 +2,7 @@ package me.shawlaf.banmanager.managers.config.users;
 
 import me.shawlaf.banmanager.managers.config.AbstractConfiguration;
 import me.shawlaf.banmanager.managers.database.UserDatabase;
+import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.io.BufferedWriter;
@@ -28,6 +29,19 @@ public class LocalUserDatabase extends AbstractConfiguration implements UserData
     public void updateUser(UUID uuid, JSONObject object) {
         document.put(uuid.toString(), object);
     }
+    
+    @Override
+    public void createUser(String name, UUID uuid) {
+        JSONObject userObject = new JSONObject();
+        
+        userObject.put("name", name);
+        userObject.put("uuid", uuid.toString());
+        userObject.put("admin", false);
+        userObject.put("mail", new JSONArray());
+        
+        document.put(uuid.toString(), userObject);
+    }
+    
     
     @Override
     public boolean has(UUID uuid) {

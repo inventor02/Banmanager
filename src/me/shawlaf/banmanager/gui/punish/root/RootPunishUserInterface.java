@@ -3,16 +3,21 @@ package me.shawlaf.banmanager.gui.punish.root;
 import dev.wolveringer.bungeeutil.item.Material;
 import me.shawlaf.banmanager.Banmanager;
 import me.shawlaf.banmanager.gui.ItemStackBuilder;
+import me.shawlaf.banmanager.gui.MenuUtil;
 import me.shawlaf.banmanager.gui.UserInterface;
 import me.shawlaf.banmanager.permissions.Task;
 import me.shawlaf.banmanager.punish.PunishmentBuilder;
 import me.shawlaf.banmanager.users.OfflineBanmanagerUser;
+import me.shawlaf.banmanager.util.SimpleUUIDFetcher;
 import me.shawlaf.banmanager.util.chat.C;
 import net.md_5.bungee.api.ChatColor;
+import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.chat.ClickEvent;
 import net.md_5.bungee.api.chat.ComponentBuilder;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 
@@ -90,6 +95,9 @@ public class RootPunishUserInterface extends UserInterface {
             );
         }
         
+        putItem(COMPASS, 0);
+        putItem(tutorial, 8);
+        
         OfflineBanmanagerUser offenderProfile = plugin.getOfflineUser(punishmentBuilder.offender);
         
         if (offenderProfile != null) {
@@ -134,7 +142,97 @@ public class RootPunishUserInterface extends UserInterface {
                 2, 5
         );
         
-        putItem(COMPASS, 0);
-        putItem(tutorial, 8);
+        ItemStackBuilder
+                confirmItem = ItemStackBuilder
+                .build(Material.WOOL, click -> {
+                    if (
+                            punishmentBuilder.punishmentType != null
+                                    && punishmentBuilder.punishmentType.requiresOnline()
+                                    && ProxyServer.getInstance().getPlayer(punishmentBuilder.offender) == null) {
+                        return;
+                    }
+                    
+                    if (
+                            punishmentBuilder.punishmentType == null
+                                    || punishmentBuilder.punishmentLengthBuilder.getSum() == 0) {
+                        return;
+                    }
+                    
+                    if (
+                            offenderProfile == null
+                                    || offenderProfile.isAdmin()) {
+                        return;
+                    }
+                    
+                    // TODO open confirm inventory
+                })
+                .damage(13)
+                .displayName(C.GREEN + "Continue"),
+                errorItem = ItemStackBuilder
+                        .build(Material.STAINED_GLASS_PANE)
+                        .damage(14);
+        
+        List<String> errorLore = new ArrayList<>();
+        errorLore.add("");
+        
+        int posType, posReason, posTime = 0;
+        
+        if (punishmentBuilder.punishmentType != null && punishmentBuilder.punishmentType.isSoft()) {
+            posType = MenuUtil.guiPosition(4, 3);
+            posReason = MenuUtil.guiPosition(4, 7);
+        } else {
+            posType = MenuUtil.guiPosition(4, 2);
+            posReason = MenuUtil.guiPosition(4, 5);
+            posTime = MenuUtil.guiPosition(4, 8);
+        }
+        
+        if (punishmentBuilder.punishmentType == null) {
+            errorLore.add(C.RED + "Please select a punishment type!");
+            putItem(errorItem.displayName(C.RED + "^ Please select a punishment type here!"), posType + 9);
+        }
+        
+        if (punishmentBuilder.punishmentLengthBuilder.getSum() == 0 && (punishmentBuilder.punishmentType == null || punishmentBuilder.punishmentType.hasLength())) {
+            errorLore.add(C.RED + "Please specify a proper punishment length!");
+            putItem(errorItem.displayName(C.RED + "^ Please specify a punishment length here!"), posTime + 9);
+        }
+        
+        if (offenderProfile == null) {
+            errorLore.add(C.RED + "This player is not in the database!");
+        }
+        
+        if (offenderProfile != null && offenderProfile.isAdmin()) {
+            errorLore.add(C.RED + "This player is exempt from punishment!");
+        }
+        
+        if (punishmentBuilder.punishmentType != null && punishmentBuilder.punishmentType.requiresOnline() && ProxyServer.getInstance().getPlayer(punishmentBuilder.offender) == null) {
+            errorLore.add(C.RED + punishmentBuilder.punishmentType.name() + " requires player to be online");
+        }
+        
+        confirmItem.lore(errorLore.stream().toArray(String[]::new));
+        
+        putItem(
+                confirmItem,
+                2, 6
+        );
+        
+        if (offenderProfile == null && Task.DB_FETCH_MOJANG.canExecute(moderator)) {
+            putItem(
+                    ItemStackBuilder
+                            .build(Material.BOW, click -> {
+                                try {
+                                    SimpleUUIDFetcher.NameUUIDSet nameUUIDSet = SimpleUUIDFetcher.getNameUUID(punishmentBuilder.offender);
+                                    
+                                    if (nameUUIDSet != null) {
+                                        plugin.getDatabaseManager().getUuidMapDatabase().updateNameUUIDSet(nameUUIDSet.name(), nameUUIDSet.id());
+                                        plugin.getDatabaseManager().getUserDatabase().createUser(nameUUIDSet.name(), nameUUIDSet.id());
+                                    }
+                                } catch (Exception e) {
+                                    moderator.sendMessage(C.RED + "Failed to fetch information from Mojang for " + punishmentBuilder.offender + ": " + e.getMessage() + ", make sure the name is properly capitalized!");
+                                }
+                            })
+                            .displayName(C.GOLD + "Fetch from Mojang and add to Database"),
+                    2, 7
+            );
+        }
     }
 }

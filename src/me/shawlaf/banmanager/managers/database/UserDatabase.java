@@ -16,6 +16,8 @@ public interface UserDatabase {
     
     void updateUser(UUID uuid, JSONObject object);
     
+    void createUser(String name, UUID uuid);
+    
     default void updateUser(OfflineBanmanagerUser user) {
         updateUser(user.getUniqueId(), user.toJSONObject());
     }

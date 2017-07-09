@@ -23,4 +23,7 @@ public enum PunishmentType {
         return this == BAN || this == MUTE;
     }
     
+    public boolean requiresOnline() {
+        return isSoft();
+    }
 }
